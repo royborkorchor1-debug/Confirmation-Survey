@@ -648,7 +648,7 @@
           <div class="text-xl sm:text-2xl font-bold text-amber-600">
             <span id="roomStatAssigned">0</span> / <span id="roomStatRequested">0</span>
           </div>
-          <div class="text-[11px] text-slate-400">ราย (จัดแล้ว / ขอที่พัก)</div>
+          <div class="text-[11px] text-slate-400">ราย (รอจัด <span id="roomStatUnassigned" class="font-semibold text-red-500">0</span> ราย)</div>
         </div>
       </div>
 
@@ -703,17 +703,25 @@
       <div id="roomSubAssign" class="hidden space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            <div class="p-4 bg-slate-50 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
               <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
                 <i class="fas fa-user-check text-amber-600"></i>
                 <span>ผู้ลงทะเบียนที่ต้องการที่พัก</span>
               </h3>
-              <select id="filterGuestGroup" onchange="renderRoomAssignmentView()"
-                class="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">
-                <option value="ALL">ทุกประเภท (คนเดียว + ครอบครัว)</option>
-                <option value="คนเดียว">เฉพาะ: มาคนเดียว (1 คน)</option>
-                <option value="ครอบครัว">เฉพาะ: มาเป็นครอบครัว (2+ คน)</option>
-              </select>
+              <div class="flex items-center gap-1.5">
+                <select id="filterGuestAssignStatus" onchange="renderRoomAssignmentView()"
+                  class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700">
+                  <option value="ALL">สถานะ: ทั้งหมด</option>
+                  <option value="UNASSIGNED">เฉพาะ: รอจัดห้อง</option>
+                  <option value="ASSIGNED">เฉพาะ: จัดห้องแล้ว</option>
+                </select>
+                <select id="filterGuestGroup" onchange="renderRoomAssignmentView()"
+                  class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700">
+                  <option value="ALL">ทุกประเภท</option>
+                  <option value="คนเดียว">คนเดียว (1 คน)</option>
+                  <option value="ครอบครัว">ครอบครัว (2+ คน)</option>
+                </select>
+              </div>
             </div>
             <div id="guestNeedRoomList" class="p-4 space-y-3 max-h-[550px] overflow-y-auto"></div>
           </div>
@@ -1135,7 +1143,14 @@
             <button type="button" onclick="appendGuestToRoomInput()" class="px-3.5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-medium shrink-0">
               + เพิ่มชื่อ
             </button>
+            <button type="button" onclick="clearRoomOccupantsInput()" class="px-3 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 text-xs font-medium shrink-0" title="ล้างรายชื่อผู้เข้าพักทั้งหมดในห้องนี้">
+              ล้างห้อง
+            </button>
           </div>
+
+          <label for="modalRoomOccupants" class="block text-xs font-medium text-slate-700 pt-1">รายชื่อผู้เข้าพักในห้องนี้ (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+          <textarea id="modalRoomOccupants" rows="2" oninput="syncRoomStatusFromOccupants()" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
+        </div>
 
           <label for="modalRoomOccupants" class="block text-xs font-medium text-slate-700 pt-1">รายชื่อผู้เข้าพักในห้องนี้</label>
           <textarea id="modalRoomOccupants" rows="2" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
@@ -1584,70 +1599,53 @@
             roomBadge = `<span class="text-slate-500">ไม่เข้าร่วมงาน (${m.declineReason})</span>`;
           } else if (m.accommodation !== 'ต้องการ') {
             roomBadge = `<span class="text-slate-600 font-medium">ไม่ขอรับการจัดสรรที่พัก</span>`;
-          } else if (assignedRoom) {
-            roomBadge = `
-              <div class="mt-1.5 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
-                <div class="font-bold"><i class="fas fa-door-open mr-1 text-emerald-700"></i>ห้องพักหมายเลข: ${assignedRoom.room_name} (ชั้น ${assignedRoom.floor})</div>
-                <div class="text-xs text-emerald-700 mt-0.5">รูปแบบ: ${assignedRoom.bed_type} • ${assignedRoom.stay_type}</div>
-              </div>`;
           } else {
-            roomBadge = `<span class="inline-block mt-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i>ขอที่พักแล้ว (อยู่ระหว่างเจ้าหน้าที่จัดห้อง)</span>`;
+            const assignedRoom = findAssignedRoomForGuest(m, rooms.map(mapRoomRow));
+            if (assignedRoom) {
+              roomBadge = `
+                <div class="mt-1.5 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
+                  <div class="font-bold"><i class="fas fa-door-open mr-1 text-emerald-700"></i>ห้องพักหมายเลข: ${assignedRoom.roomName} (ชั้น ${assignedRoom.floor})</div>
+                  <div class="text-xs text-emerald-700 mt-0.5">รูปแบบ: ${assignedRoom.bedType} • ${assignedRoom.stayType}</div>
+                </div>`;
+            } else {
+              roomBadge = `<span class="inline-block mt-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i>ขอที่พักแล้ว (อยู่ระหว่างเจ้าหน้าที่จัดห้อง)</span>`;
+            }
           }
-
-          return `
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 text-left space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <span class="font-bold text-slate-900 text-sm">${m.rank}${m.firstName} ${m.lastName}</span>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${isAttend ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${m.attendanceStatus}</span>
-              </div>
-              <div class="text-xs text-slate-500">ลงทะเบียนเมื่อ: ${m.timestamp}</div>
-              ${isAttend ? `
-                <div class="text-xs text-slate-700 pt-1">
-                  • ยอดรวม: <b>${totalPeople} คน</b> (ผู้ใหญ่ ${counts.adults}, เด็ก ${counts.children}, ทารก ${counts.infants})
-                  ${m.childCount > 0 ? `<br>• รายละเอียดบุตร: ${m.childAges}` : ''}
-                </div>
-              ` : ''}
-              <div class="text-xs pt-1">${roomBadge}</div>
-            </div>
-          `;
-        }).join('');
-
-        Swal.fire({
-          title: `<span class="text-base font-bold text-slate-800">ผลการตรวจสอบสิทธิ์ (${matches.length} รายการ)</span>`,
-          html: `<div class="space-y-2.5 max-h-96 overflow-y-auto pr-1">${cardsHtml}</div>`,
-          confirmButtonText: 'ปิดหน้าต่าง',
-          confirmButtonColor: '#1e3a8a'
-        });
-      });
-    }
-
-    function mapRegistrationRow(row) {
-      return {
-        id: row.id,
-        timestamp: formatThaiDateTime(row.created_at),
-        rank: row.rank || '',
-        firstName: row.first_name || '',
-        lastName: row.last_name || '',
-        attendanceStatus: row.attendance_status || '',
-        declineReason: row.decline_reason || '-',
-        adultCount: Number(row.adult_count) || 0,
-        childCount: Number(row.child_count) || 0,
-        childAges: row.child_ages || '-',
-        accommodation: row.accommodation || '-'
-      };
-    }
-
     function mapRoomRow(row) {
       return {
         id: row.id,
         roomName: row.room_name || '',
         floor: row.floor || '',
-        bedType: row.bed_type || 'เตียงเดียว',
+        bedType: (row.bed_type === 'เตียงเดียว' ? 'เตียงเดี่ยว' : row.bed_type) || 'เตียงเดี่ยว',
         stayType: row.stay_type || 'คนเดียว',
         capacity: Number(row.capacity) || 1,
         status: row.status || 'ว่าง',
         occupants: row.occupants || ''
       };
+    }
+
+    // ฟังก์ชันช่วยแยกรายชื่อผู้เข้าพักในห้อง (รองรับคั่นด้วย , หรือขึ้นบรรทัดใหม่)
+    function parseRoomOccupants(occupantsStr) {
+      if (!occupantsStr) return [];
+      return occupantsStr
+        .split(/[\n,]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    // ฟังก์ชันค้นหาห้องพักของสมาชิกแบบแม่นยำ (ตรวจทั้ง ยศ+ชื่อ+นามสกุล)
+    function findAssignedRoomForGuest(guest, roomsList = allRooms) {
+      const fullName = `${guest.rank}${guest.firstName} ${guest.lastName}`.replace(/\s+/g, ' ').trim();
+      const compactFullName = `${guest.rank}${guest.firstName}${guest.lastName}`.replace(/\s+/g, '').trim();
+
+      return roomsList.find(room => {
+        const occList = parseRoomOccupants(room.occupants);
+        return occList.some(occ => {
+          const normOcc = occ.replace(/\s+/g, ' ').trim();
+          const compactOcc = occ.replace(/\s+/g, '').trim();
+          return normOcc === fullName || compactOcc === compactFullName || normOcc.includes(fullName);
+        });
+      }) || null;
     }
 
     // =========================================================================
@@ -1686,8 +1684,7 @@
         const isAttend = item.attendanceStatus === 'ร่วมงาน';
         const counts = calculateRecordAgeGroups(item);
         const totalPeople = isAttend ? (counts.adults + counts.children + counts.infants) : 0;
-        const searchKey = `${item.rank}${item.firstName}`;
-        const assignedRoom = allRooms.find(r => r.occupants && r.occupants.includes(searchKey));
+        const assignedRoom = isAttend ? findAssignedRoomForGuest(item, allRooms) : null;
 
         return [
           idx + 1,
@@ -1708,665 +1705,9 @@
         ].map(escapeCSV).join(',');
       });
 
-      const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\r\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-
-      const dateStamp = new Date().toISOString().slice(0, 10);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `รายชื่อลงทะเบียนร่วมงาน_${dateStamp}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      Swal.fire({
-        icon: 'success',
-        title: 'ดาวน์โหลดไฟล์เรียบร้อย!',
-        text: 'สามารถเปิดไฟล์ด้วยโปรแกรม Microsoft Excel ได้ทันที',
-        timer: 1800,
-        showConfirmButton: false
-      });
-    }
-
-    // =========================================================================
-    // ส่วนที่ 2: ระบบล็อกอินเจ้าหน้าที่, การโหลดข้อมูล & Real-time Subscription
-    // =========================================================================
-    function openAdminLogin() {
-      if (!ensureSupabaseReady()) return;
-
-      Swal.fire({
-        title: '<span class="text-lg font-bold text-slate-800"><i class="fas fa-user-shield mr-2 text-blue-800"></i>เข้าสู่ระบบสำหรับเจ้าหน้าที่</span>',
-        input: 'password',
-        inputLabel: 'กรุณากรอกรหัสผ่านเจ้าหน้าที่',
-        inputPlaceholder: 'ระบุรหัสผ่าน...',
-        showCancelButton: true,
-        confirmButtonText: 'เข้าสู่ระบบ',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#1e3a8a',
-        preConfirm: async (password) => {
-          if (!password) {
-            Swal.showValidationMessage('กรุณากรอกรหัสผ่าน');
-            return false;
-          }
-          await fetchSystemConfig();
-          if (password.trim() === systemConfig.adminPassword) {
-            return true;
-          }
-          Swal.showValidationMessage('รหัสผ่านไม่ถูกต้อง');
-          return false;
-        }
-      }).then((result) => {
-        if (result.isConfirmed && result.value === true) {
-          enterAdminMode();
-        }
-      });
-    }
-
-    function enterAdminMode() {
-      document.getElementById('landingView').classList.add('hidden');
-      document.getElementById('publicView').classList.add('hidden');
-      document.getElementById('adminView').classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      loadAdminData(true);
-      subscribeRealtimeChanges();
-    }
-
-    function logoutAdmin() {
-      if (realtimeChannel && supabaseClient) {
-        supabaseClient.removeChannel(realtimeChannel);
-        realtimeChannel = null;
-      }
-      backToLanding();
-    }
-
-    function subscribeRealtimeChanges() {
-      if (!supabaseClient) return;
-      if (realtimeChannel) {
-        supabaseClient.removeChannel(realtimeChannel);
-      }
-
-      realtimeChannel = supabaseClient
-        .channel('admin-live-sync')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => {
-          loadAdminData(false);
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
-          loadAdminData(false);
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, () => {
-          fetchSystemConfig();
-        })
-        .subscribe((status) => {
-          const dot = document.getElementById('realtimeStatusDot');
-          const txt = document.getElementById('realtimeStatusText');
-          if (status === 'SUBSCRIBED') {
-            if (dot) dot.className = 'w-2 h-2 shrink-0 rounded-full bg-emerald-400 animate-pulse';
-            if (txt) txt.innerText = 'เชื่อมต่อ Supabase Real-time ทันที';
-          }
-        });
-    }
-
-    async function loadAdminData(showSpinner = false) {
-      if (!supabaseClient) return;
-      const refreshIcon = document.getElementById('refreshIcon');
-      if (showSpinner && refreshIcon) refreshIcon.classList.add('fa-spin');
-
-      try {
-        const [regRes, roomRes] = await Promise.all([
-          supabaseClient
-            .from('registrations')
-            .select('*')
-            .order('id', { ascending: true }),
-          supabaseClient
-            .from('rooms')
-            .select('*')
-            .order('floor', { ascending: true })
-            .order('room_name', { ascending: true })
-        ]);
-
-        if (!regRes.error && regRes.data) {
-          allRecords = regRes.data.map(mapRegistrationRow);
-        }
-        if (!roomRes.error && roomRes.data) {
-          allRooms = roomRes.data.map(mapRoomRow);
-        }
-
-        updateDashboardStats();
-        renderAdminTable();
-        renderAllRoomViews();
-        renderSummaryReport();
-      } catch (err) {
-        console.error('Load admin data error:', err);
-      } finally {
-        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
-      }
-    }
-
-    function calculateRecordAgeGroups(item) {
-      if (item.attendanceStatus !== 'ร่วมงาน') {
-        return { adults: 0, children: 0, infants: 0 };
-      }
-
-      let adults = Number(item.adultCount) || 0;
-      let children = 0;
-      let infants = 0;
-
-      const childCount = Number(item.childCount) || 0;
-      const rawAges = (item.childAges || '').toString();
-
-      if (childCount > 0) {
-        if (!rawAges || rawAges === '-') {
-          children += childCount;
-        } else {
-          const parts = rawAges.split(',').map(s => s.trim()).filter(Boolean);
-          parts.forEach(part => {
-            if (part.includes('ต่ำกว่า 5 ปี') || part.includes('เดือน') || part.includes('วัน')) {
-              infants += 1;
-            } else if (part.includes('13 ปี ขึ้นไป')) {
-              adults += 1;
-            } else if (part.includes('5 - 12 ปี')) {
-              children += 1;
-            } else {
-              const numMatch = part.match(/(\d+)/);
-              if (numMatch) {
-                const ageNum = parseInt(numMatch[1], 10);
-                if (ageNum >= 13) adults += 1;
-                else if (ageNum >= 5) children += 1;
-                else infants += 1;
-              } else {
-                children += 1;
-              }
-            }
-          });
-        }
-      }
-
-      return { adults, children, infants };
-    }
-
-    function formatChildDetailsBadge(item) {
-      const rawAges = (item.childAges || '').toString().trim();
-      if (!rawAges || rawAges === '-' || (Number(item.childCount) || 0) <= 0) {
-        return '<span class="text-slate-400">-</span>';
-      }
-
-      const parts = rawAges.split(',').map(s => s.trim()).filter(Boolean);
-      return `<div class="flex flex-wrap gap-1">` + parts.map(part => {
-        let displayAge = part;
-        const colonMatch = part.match(/:\s*(.+)$/);
-        if (colonMatch) {
-          displayAge = `อายุ ${colonMatch[1].trim()}`;
-        } else if (!displayAge.startsWith('อายุ')) {
-          displayAge = `อายุ ${displayAge}`;
-        }
-
-        let badgeColor = 'bg-purple-50 text-purple-800 border-purple-200';
-        if (part.includes('ต่ำกว่า 5 ปี') || part.includes('เดือน') || part.includes('วัน')) {
-          badgeColor = 'bg-pink-50 text-pink-700 border-pink-200';
-        } else if (part.includes('13 ปี ขึ้นไป')) {
-          badgeColor = 'bg-indigo-50 text-indigo-800 border-indigo-200';
-        } else {
-          const numMatch = displayAge.match(/(\d+)/);
-          if (numMatch) {
-            const ageNum = parseInt(numMatch[1], 10);
-            if (ageNum >= 13) badgeColor = 'bg-indigo-50 text-indigo-800 border-indigo-200';
-            else if (ageNum < 5) badgeColor = 'bg-pink-50 text-pink-700 border-pink-200';
-          }
-        }
-
-        return `<span class="inline-block px-2 py-0.5 rounded-md text-[11px] font-medium border ${badgeColor} whitespace-nowrap">${displayAge}</span>`;
-      }).join('') + `</div>`;
-    }
-
-    function updateDashboardStats() {
-      let totalRecords = allRecords.length;
-      let attendCount = 0;
-      let declineCount = 0;
-      let totalAdults = 0;
-      let totalChildren = 0;
-      let totalInfants = 0;
-      let wantRoomCount = 0;
-      let noRoomCount = 0;
-
-      allRecords.forEach(item => {
-        if (item.attendanceStatus === 'ร่วมงาน') {
-          attendCount++;
-          const counts = calculateRecordAgeGroups(item);
-          totalAdults += counts.adults;
-          totalChildren += counts.children;
-          totalInfants += counts.infants;
-
-          if (item.accommodation === 'ต้องการ') wantRoomCount++;
-          else noRoomCount++;
-        } else if (item.attendanceStatus === 'สละสิทธิ์') {
-          declineCount++;
-        }
-      });
-
-      const totalPeople = totalAdults + totalChildren + totalInfants;
-
-      document.getElementById('statTotalRecords').innerText = totalRecords;
-      document.getElementById('statAttend').innerText = attendCount;
-      document.getElementById('statDecline').innerText = declineCount;
-      document.getElementById('statTotalPeople').innerText = totalPeople;
-      document.getElementById('statAdults').innerText = totalAdults;
-      document.getElementById('statChildren').innerText = totalChildren;
-      document.getElementById('statInfants').innerText = totalInfants;
-      document.getElementById('statRooms').innerText = wantRoomCount;
-      document.getElementById('statNoRooms').innerText = noRoomCount;
-    }
-
-    function resetAndRenderAdminTable() {
-      currentAdminPage = 1;
-      renderAdminTable();
-    }
-
-    function changeAdminPage(delta) {
-      currentAdminPage += delta;
-      renderAdminTable();
-    }
-
-    function renderAdminTable() {
-      const tbody = document.getElementById('adminTableBody');
-      const filterStatus = document.getElementById('filterStatus').value;
-      const searchText = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      const filtered = allRecords.filter(item => {
-        let matchStatus = true;
-        if (filterStatus === 'WANT_ROOM') {
-          matchStatus = item.attendanceStatus === 'ร่วมงาน' && item.accommodation === 'ต้องการ';
-        } else if (filterStatus !== 'ALL') {
-          matchStatus = item.attendanceStatus === filterStatus;
-        }
-        const fullName = `${item.rank}${item.firstName} ${item.lastName}`.toLowerCase();
-        const matchSearch = fullName.includes(searchText) ||
-                            (item.declineReason && item.declineReason.toLowerCase().includes(searchText));
-        return matchStatus && matchSearch;
-      });
-
-      const totalFiltered = filtered.length;
-      const mobileHint = document.getElementById('mobileRecordHint');
-      if (mobileHint) mobileHint.innerText = totalFiltered;
-
-      const totalPages = Math.max(1, Math.ceil(totalFiltered / ADMIN_PAGE_SIZE));
-      if (currentAdminPage > totalPages) currentAdminPage = totalPages;
-      if (currentAdminPage < 1) currentAdminPage = 1;
-
-      const startIndex = (currentAdminPage - 1) * ADMIN_PAGE_SIZE;
-      const endIndex = Math.min(startIndex + ADMIN_PAGE_SIZE, totalFiltered);
-      const pageItems = filtered.slice(startIndex, endIndex);
-
-      const infoText = document.getElementById('paginationInfoText');
-      const pageText = document.getElementById('pageIndicatorText');
-      const btnPrev = document.getElementById('btnPrevPage');
-      const btnNext = document.getElementById('btnNextPage');
-
-      if (infoText) {
-        infoText.innerText = totalFiltered === 0
-          ? 'แสดง 0 - 0 จากทั้งหมด 0 รายชื่อ'
-          : `แสดงลำดับที่ ${startIndex + 1} - ${endIndex} จากทั้งหมด ${totalFiltered} รายชื่อ`;
-      }
-      if (pageText) pageText.innerText = `หน้า ${currentAdminPage} / ${totalPages}`;
-      if (btnPrev) btnPrev.disabled = currentAdminPage <= 1;
-      if (btnNext) btnNext.disabled = currentAdminPage >= totalPages;
-
-      if (pageItems.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="10" class="p-8 text-center text-slate-400">
-              <i class="fas fa-folder-open text-2xl mb-2 text-slate-300"></i>
-              <p>ไม่พบข้อมูลรายชื่อผู้ลงทะเบียน</p>
-            </td>
-          </tr>`;
-        return;
-      }
-
-      tbody.innerHTML = pageItems.map((item, idx) => {
-        const orderNumber = startIndex + idx + 1;
-        const isAttend = item.attendanceStatus === 'ร่วมงาน';
-        const counts = calculateRecordAgeGroups(item);
-
-        const statusBadge = isAttend
-          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 whitespace-nowrap">ร่วมงาน</span>`
-          : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800 whitespace-nowrap">สละสิทธิ์</span>`;
-
-        const accBadge = !isAttend
-          ? `<span class="text-slate-400">-</span>`
-          : item.accommodation === 'ต้องการ'
-            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-100 text-amber-800 whitespace-nowrap"><i class="fas fa-bed mr-1"></i>ต้องการ</span>`
-            : `<span class="text-slate-500 text-xs whitespace-nowrap">ไม่ต้องการ</span>`;
-
-        const safeName = `${item.rank}${item.firstName} ${item.lastName}`.replace(/'/g, "\\'");
-
-        return `
-          <tr class="hover:bg-blue-50/30 transition-colors">
-            <td class="p-3 sm:p-3.5 text-xs text-slate-500 whitespace-nowrap">
-              <span class="font-bold text-blue-900 mr-1">#${orderNumber}</span> ${item.timestamp}
-            </td>
-            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">
-              ${item.rank}${item.firstName} ${item.lastName}
-            </td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
-            <td class="p-3 sm:p-3.5 text-center font-bold text-indigo-900">${isAttend ? counts.adults : '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center font-bold text-purple-700">${isAttend ? counts.children : '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center font-bold text-pink-600">${isAttend ? counts.infants : '-'}</td>
-            <td class="p-3 sm:p-3.5">${isAttend ? formatChildDetailsBadge(item) : '<span class="text-slate-400">-</span>'}</td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${accBadge}</td>
-            <td class="p-3 sm:p-3.5 text-xs text-slate-600 max-w-[180px] truncate" title="${item.declineReason || '-'}">
-              ${!isAttend ? (item.declineReason || '-') : '-'}
-            </td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">
-              <button type="button" onclick="openFormModal('edit', ${item.id})" title="แก้ไขข้อมูล"
-                class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button type="button" onclick="confirmDeleteRecord(${item.id}, '${safeName}')" title="ลบข้อมูล"
-                class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function openFormModal(mode, recordId = null) {
-      const modal = document.getElementById('adminFormModal');
-      const title = document.getElementById('modalTitle');
-      document.getElementById('adminEditForm').reset();
-
-      if (mode === 'add') {
-        title.innerText = 'เพิ่มข้อมูลสมาชิกใหม่';
-        document.getElementById('editRecordId').value = '';
-        document.getElementById('modalStatus').value = 'ร่วมงาน';
-        document.getElementById('modalAdultCount').value = '1';
-        document.getElementById('modalChildCount').value = '0';
-        document.getElementById('modalAccommodation').value = 'ไม่ต้องการ';
-      } else {
-        title.innerText = 'แก้ไขข้อมูลสมาชิก';
-        const record = allRecords.find(r => r.id === recordId);
-        if (!record) return;
-
-        document.getElementById('editRecordId').value = record.id;
-        document.getElementById('modalRank').value = record.rank;
-        document.getElementById('modalFirstName').value = record.firstName;
-        document.getElementById('modalLastName').value = record.lastName;
-        document.getElementById('modalStatus').value = record.attendanceStatus || 'ร่วมงาน';
-        document.getElementById('modalDeclineReason').value = record.declineReason === '-' ? '' : record.declineReason;
-        document.getElementById('modalAdultCount').value = record.adultCount || 1;
-        document.getElementById('modalChildCount').value = record.childCount || 0;
-        document.getElementById('modalChildAges').value = record.childAges === '-' ? '' : record.childAges;
-        document.getElementById('modalAccommodation').value = record.accommodation === '-' ? 'ไม่ต้องการ' : record.accommodation;
-      }
-
-      toggleModalFields();
-      toggleModalChildAges();
-      modal.classList.remove('hidden');
-    }
-
-    function closeFormModal() {
-      document.getElementById('adminFormModal').classList.add('hidden');
-    }
-
-    function toggleModalFields() {
-      const status = document.getElementById('modalStatus').value;
-      const declineBox = document.getElementById('modalDeclineBox');
-      const attendBox = document.getElementById('modalAttendBox');
-
-      if (status === 'สละสิทธิ์') {
-        declineBox.classList.remove('hidden');
-        attendBox.classList.add('hidden');
-      } else {
-        declineBox.classList.add('hidden');
-        attendBox.classList.remove('hidden');
-      }
-    }
-
-    function toggleModalChildAges() {
-      const count = parseInt(document.getElementById('modalChildCount').value) || 0;
-      const box = document.getElementById('modalChildAgesBox');
-      if (count > 0) box.classList.remove('hidden');
-      else box.classList.add('hidden');
-    }
-
-    document.getElementById('adminEditForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!ensureSupabaseReady()) return;
-
-      const recordId = document.getElementById('editRecordId').value;
-      const status = document.getElementById('modalStatus').value;
-      const childCount = status === 'ร่วมงาน' ? (parseInt(document.getElementById('modalChildCount').value) || 0) : 0;
-
-      const payload = {
-        created_at: new Date().toISOString(),
-        rank: document.getElementById('modalRank').value,
-        first_name: document.getElementById('modalFirstName').value.trim(),
-        last_name: document.getElementById('modalLastName').value.trim(),
-        attendance_status: status,
-        decline_reason: status === 'สละสิทธิ์' ? (document.getElementById('modalDeclineReason').value.trim() || '-') : '-',
-        adult_count: status === 'ร่วมงาน' ? Number(document.getElementById('modalAdultCount').value) : 0,
-        child_count: childCount,
-        child_ages: (status === 'ร่วมงาน' && childCount > 0) ? (document.getElementById('modalChildAges').value.trim() || '-') : '-',
-        accommodation: status === 'ร่วมงาน' ? document.getElementById('modalAccommodation').value : '-'
-      };
-
-      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-      try {
-        if (recordId === '') {
-          const { error } = await supabaseClient.from('registrations').insert([payload]);
-          if (error) throw error;
-          closeFormModal();
-          Swal.fire({ icon: 'success', title: 'เพิ่มรายชื่อสำเร็จ!', timer: 1200, showConfirmButton: false });
-        } else {
-          const { error } = await supabaseClient.from('registrations').update(payload).eq('id', Number(recordId));
-          if (error) throw error;
-          closeFormModal();
-          Swal.fire({ icon: 'success', title: 'อัปเดตข้อมูลสำเร็จ!', timer: 1200, showConfirmButton: false });
-        }
-        await loadAdminData(false);
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
-      }
-    });
-
-    function confirmDeleteRecord(recordId, fullName) {
-      Swal.fire({
-        title: 'ยืนยันการลบข้อมูล?',
-        html: `คุณต้องการลบรายชื่อ <b>${fullName}</b> ออกจากระบบใช่หรือไม่?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'ใช่, ลบข้อมูล',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#dc2626'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-          try {
-            const { error } = await supabaseClient.from('registrations').delete().eq('id', recordId);
-            if (error) throw error;
-            Swal.fire({ icon: 'success', title: 'ลบข้อมูลเรียบร้อยแล้ว', timer: 1200, showConfirmButton: false });
-            await loadAdminData(false);
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
-          }
-        }
-      });
-    }
-
-    function switchAdminMainTab(tab) {
-      const surveySec = document.getElementById('adminSurveySection');
-      const roomsSec = document.getElementById('adminRoomsSection');
-      const summarySec = document.getElementById('adminSummarySection');
-      const settingsSec = document.getElementById('adminSettingsSection');
-
-      const btnSurvey = document.getElementById('tabBtnSurvey');
-      const btnRooms = document.getElementById('tabBtnRooms');
-      const btnSummary = document.getElementById('tabBtnSummary');
-      const btnSettings = document.getElementById('tabBtnSettings');
-
-      const activeClass = "w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-blue-900 text-white shadow-sm";
-      const inactiveClass = "w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100";
-
-      surveySec.classList.add('hidden');
-      roomsSec.classList.add('hidden');
-      summarySec.classList.add('hidden');
-      settingsSec.classList.add('hidden');
-
-      btnSurvey.className = inactiveClass;
-      btnRooms.className = inactiveClass;
-      btnSummary.className = inactiveClass;
-      btnSettings.className = inactiveClass;
-
-      if (tab === 'survey') {
-        surveySec.classList.remove('hidden');
-        btnSurvey.className = activeClass;
-      } else if (tab === 'rooms') {
-        roomsSec.classList.remove('hidden');
-        btnRooms.className = activeClass;
-        renderAllRoomViews();
-      } else if (tab === 'summary') {
-        summarySec.classList.remove('hidden');
-        btnSummary.className = activeClass;
-        renderSummaryReport();
-      } else if (tab === 'settings') {
-        settingsSec.classList.remove('hidden');
-        btnSettings.className = activeClass;
-      }
-    }
-
-    function switchRoomSubTab(subTab) {
-      const mapDiv = document.getElementById('roomSubMap');
-      const assignDiv = document.getElementById('roomSubAssign');
-      const detailsDiv = document.getElementById('roomSubDetails');
-
-      const btnMap = document.getElementById('subTabMap');
-      const btnAssign = document.getElementById('subTabAssign');
-      const btnDetails = document.getElementById('subTabDetails');
-
-      const activeClass = "w-full lg:w-auto px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 bg-indigo-900 text-white shadow-sm";
-      const inactiveClass = "w-full lg:w-auto px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100";
-
-      mapDiv.classList.add('hidden');
-      assignDiv.classList.add('hidden');
-      detailsDiv.classList.add('hidden');
-
-      btnMap.className = inactiveClass;
-      btnAssign.className = inactiveClass;
-      btnDetails.className = inactiveClass;
-
-      if (subTab === 'map') {
-        mapDiv.classList.remove('hidden');
-        btnMap.className = activeClass;
-        renderHotelFloorPlan();
-      } else if (subTab === 'assign') {
-        assignDiv.classList.remove('hidden');
-        btnAssign.className = activeClass;
-        renderRoomAssignmentView();
-      } else if (subTab === 'details') {
-        detailsDiv.classList.remove('hidden');
-        btnDetails.className = activeClass;
-        renderRoomsTable();
-      }
-    }
-
-    async function saveSystemSettings(e) {
-      e.preventDefault();
-      if (!ensureSupabaseReady()) return;
-
-      const newSystemName = document.getElementById('settingSystemName').value.trim();
-      const newRegStatus = document.getElementById('settingRegistrationStatus').value;
-
-      Swal.fire({ title: 'กำลังบันทึกการตั้งค่า...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-      try {
-        const { error } = await supabaseClient
-          .from('system_settings')
-          .upsert([
-            { config_key: 'system_name', config_value: newSystemName },
-            { config_key: 'reg_status', config_value: newRegStatus }
-          ], { onConflict: 'config_key' });
-
-        if (error) throw error;
-
-        systemConfig.systemName = newSystemName;
-        systemConfig.regStatus = newRegStatus;
-        applySystemConfig();
-
-        Swal.fire({
-          icon: 'success',
-          title: 'บันทึกการตั้งค่าระบบเรียบร้อย!',
-          timer: 1200,
-          showConfirmButton: false
-        });
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
-      }
-    }
-
-    function renderSummaryReport() {
-      let totalRecords = allRecords.length;
-      let attendCount = 0;
-      let declineCount = 0;
-      let totalAdults = 0;
-      let totalChildren = 0;
-      let totalInfants = 0;
-      let wantRoomCount = 0;
-      let noRoomCount = 0;
-
-      let soloCount = 0;
-      let soloPeople = 0;
-      let familyCount = 0;
-      let familyPeople = 0;
-      let coupleOnlyCount = 0;
-      let coupleOnlyPeople = 0;
-      let withChildrenCount = 0;
-      let withChildrenPeople = 0;
-
-      const declineList = [];
-
-      allRecords.forEach(item => {
-        if (item.attendanceStatus === 'ร่วมงาน') {
-          attendCount++;
-          const counts = calculateRecordAgeGroups(item);
-          const itemTotalPeople = counts.adults + counts.children + counts.infants;
-          totalAdults += counts.adults;
-          totalChildren += counts.children;
-          totalInfants += counts.infants;
-
-          const adultNum = Number(item.adultCount) || 1;
-          const childNum = Number(item.childCount) || 0;
-
-          if (itemTotalPeople === 1) {
-            soloCount++;
-            soloPeople += itemTotalPeople;
-          } else {
-            familyCount++;
-            familyPeople += itemTotalPeople;
-            if (childNum === 0 && adultNum === 2) {
-              coupleOnlyCount++;
-              coupleOnlyPeople += itemTotalPeople;
-            } else {
-              withChildrenCount++;
-              withChildrenPeople += itemTotalPeople;
-            }
-          }
-
-          if (item.accommodation === 'ต้องการ') wantRoomCount++;
-          else noRoomCount++;
-        } else if (item.attendanceStatus === 'สละสิทธิ์') {
-          declineCount++;
-          declineList.push(item);
-        }
-      });
-
       const totalPeople = totalAdults + totalChildren + totalInfants;
       const guestsNeedRoom = allRecords.filter(r => r.attendanceStatus === 'ร่วมงาน' && r.accommodation === 'ต้องการ');
-      const allOccupantsText = allRooms.map(r => r.occupants || '').join(' ');
-      const assignedCount = guestsNeedRoom.filter(g => allOccupantsText.includes(`${g.rank}${g.firstName}`)).length;
+      const assignedCount = guestsNeedRoom.filter(g => findAssignedRoomForGuest(g, allRooms) !== null).length;
       const unassignedCount = Math.max(0, guestsNeedRoom.length - assignedCount);
 
       const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
@@ -2502,14 +1843,16 @@
       const fullRooms = allRooms.filter(r => r.status === 'เต็ม').length;
 
       const guestsNeedRoom = allRecords.filter(r => r.attendanceStatus === 'ร่วมงาน' && r.accommodation === 'ต้องการ');
-      const allOccupantsText = allRooms.map(r => r.occupants).join(' ');
-      const assignedCount = guestsNeedRoom.filter(g => allOccupantsText.includes(`${g.rank}${g.firstName}`)).length;
+      const assignedCount = guestsNeedRoom.filter(g => findAssignedRoomForGuest(g, allRooms) !== null).length;
+      const unassignedCount = Math.max(0, guestsNeedRoom.length - assignedCount);
 
       document.getElementById('roomStatTotal').innerText = totalRooms;
       document.getElementById('roomStatAvailable').innerText = availableRooms;
       document.getElementById('roomStatFull').innerText = fullRooms;
       document.getElementById('roomStatAssigned').innerText = assignedCount;
       document.getElementById('roomStatRequested').innerText = guestsNeedRoom.length;
+      const unEl = document.getElementById('roomStatUnassigned');
+      if (unEl) unEl.innerText = unassignedCount;
     }
 
     function renderHotelFloorPlan() {
@@ -2539,6 +1882,7 @@
         const roomsInFloor = floorsMap[floor];
         const roomCards = roomsInFloor.map(room => {
           const isAvailable = room.status === 'ว่าง';
+          const occList = parseRoomOccupants(room.occupants);
           const cardStyle = isAvailable
             ? 'bg-emerald-50/70 border-emerald-300 hover:border-emerald-500 text-emerald-950'
             : 'bg-red-50/80 border-red-300 hover:border-red-500 text-red-950';
@@ -2563,8 +1907,8 @@
                 </div>
               </div>
               <div class="pt-2 border-t border-slate-200/60 text-xs">
-                ${room.occupants 
-                  ? `<p class="font-medium text-slate-800 line-clamp-2" title="${room.occupants}"><i class="fas fa-user-check text-red-600 mr-1"></i>${room.occupants}</p>` 
+                ${occList.length > 0
+                  ? `<p class="font-medium text-slate-800 line-clamp-2" title="${occList.join(', ')}"><i class="fas fa-user-check text-red-600 mr-1"></i>${occList.join(', ')}</p>` 
                   : `<p class="text-emerald-700/80 italic"><i class="fas fa-plus-circle mr-1"></i>คลิกเพื่อจัดผู้เข้าพัก</p>`}
               </div>
             </div>
@@ -2589,15 +1933,24 @@
       const guestContainer = document.getElementById('guestNeedRoomList');
       const roomContainer = document.getElementById('roomGroupList');
       const filterGuest = document.getElementById('filterGuestGroup').value;
+      const filterAssignStatusEl = document.getElementById('filterGuestAssignStatus');
+      const filterAssignStatus = filterAssignStatusEl ? filterAssignStatusEl.value : 'ALL';
       const filterRoom = document.getElementById('filterRoomStayType').value;
 
       const guestsNeedRoom = allRecords.filter(r => r.attendanceStatus === 'ร่วมงาน' && r.accommodation === 'ต้องการ').map(g => {
-        const totalPeople = (Number(g.adultCount) || 1) + (Number(g.childCount) || 0);
+        const counts = calculateRecordAgeGroups(g);
+        const totalPeople = counts.adults + counts.children + counts.infants;
         const groupType = totalPeople === 1 ? 'คนเดียว' : 'ครอบครัว';
         const fullName = `${g.rank}${g.firstName} ${g.lastName}`;
-        const assignedRoom = allRooms.find(rm => rm.occupants && rm.occupants.includes(`${g.rank}${g.firstName}`));
+        const assignedRoom = findAssignedRoomForGuest(g, allRooms);
         return { ...g, totalPeople, groupType, fullName, assignedRoom };
-      }).filter(g => filterGuest === 'ALL' || g.groupType === filterGuest);
+      }).filter(g => {
+        const matchGroup = filterGuest === 'ALL' || g.groupType === filterGuest;
+        const matchAssign = filterAssignStatus === 'ALL' ||
+          (filterAssignStatus === 'ASSIGNED' && g.assignedRoom !== null) ||
+          (filterAssignStatus === 'UNASSIGNED' && g.assignedRoom === null);
+        return matchGroup && matchAssign;
+      });
 
       if (guestsNeedRoom.length === 0) {
         guestContainer.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">ไม่มีรายการผู้ขอที่พักในหมวดนี้</div>`;
@@ -2607,19 +1960,26 @@
             ? `<span class="bg-blue-100 text-blue-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">คนเดียว (1 คน)</span>`
             : `<span class="bg-purple-100 text-purple-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">ครอบครัว (${g.totalPeople} คน)</span>`;
 
+          const safeFullName = g.fullName.replace(/'/g, "\\'");
           const statusHtml = g.assignedRoom
-            ? `<span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
-                <i class="fas fa-check-circle mr-1"></i>พักห้อง ${g.assignedRoom.roomName} (ชั้น ${g.assignedRoom.floor})
-               </span>`
-            : `<button type="button" onclick="quickAssignGuest('${g.fullName.replace(/'/g, "\\'")}', '${g.groupType}')"
-                class="text-xs font-medium bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition-all">
+            ? `<div class="flex flex-col sm:items-end gap-1">
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+                  <i class="fas fa-check-circle mr-1"></i>ห้อง ${g.assignedRoom.roomName} (ชั้น ${g.assignedRoom.floor})
+                </span>
+                <button type="button" onclick="unassignGuestFromRoom(${g.assignedRoom.id}, '${safeFullName}')"
+                  class="text-[11px] text-red-600 hover:text-red-800 hover:underline font-medium">
+                  <i class="fas fa-times-circle mr-0.5"></i>นำออกจากห้อง
+                </button>
+               </div>`
+            : `<button type="button" onclick="quickAssignGuest('${safeFullName}', '${g.groupType}', ${g.totalPeople})"
+                class="text-xs font-medium bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition-all shrink-0">
                 <i class="fas fa-bed mr-1"></i>จัดเข้าห้องพัก
                </button>`;
 
           return `
             <div class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <span class="font-semibold text-slate-800 text-sm">${g.fullName}</span>
                   ${groupBadge}
                 </div>
@@ -2639,18 +1999,19 @@
       } else {
         roomContainer.innerHTML = filteredRooms.map(r => {
           const isAvail = r.status === 'ว่าง';
+          const occList = parseRoomOccupants(r.occupants);
           return `
             <div class="p-3.5 rounded-xl border ${isAvail ? 'border-emerald-200 bg-emerald-50/30' : 'border-red-200 bg-red-50/30'} flex items-center justify-between gap-3">
               <div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <span class="font-bold text-slate-800">ห้อง ${r.roomName}</span>
                   <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">ชั้น ${r.floor}</span>
                   <span class="text-xs ${r.stayType === 'ครอบครัว' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} px-2 py-0.5 rounded-md font-medium">${r.stayType}</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-1">${r.bedType} • รองรับ ${r.capacity} คน</p>
-                ${r.occupants ? `<p class="text-xs font-medium text-indigo-900 mt-1"><i class="fas fa-user mr-1"></i>${r.occupants}</p>` : ''}
+                <p class="text-xs text-slate-500 mt-1">${r.bedType} • รองรับ ${r.capacity} คน (เข้าพักแล้ว ${occList.length} รายการ)</p>
+                ${occList.length > 0 ? `<p class="text-xs font-medium text-indigo-900 mt-1"><i class="fas fa-user mr-1"></i>${occList.join(', ')}</p>` : ''}
               </div>
-              <div class="flex flex-col items-end gap-1.5">
+              <div class="flex flex-col items-end gap-1.5 shrink-0">
                 <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isAvail ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${r.status}</span>
                 <button type="button" onclick="openRoomModal('edit', ${r.id})" class="text-xs text-indigo-700 hover:underline font-medium">จัดการห้อง</button>
               </div>
@@ -2660,24 +2021,31 @@
       }
     }
 
-    function quickAssignGuest(fullName, groupType) {
-      const availableRooms = allRooms.filter(r => r.status === 'ว่าง');
-      if (availableRooms.length === 0) {
+    function quickAssignGuest(fullName, groupType, totalPeople = 1) {
+      // แสดงห้องที่สถานะ "ว่าง" หรือห้องที่ยังมีที่ว่างเหลือ (เช่น ห้อง 2 คนที่มีผู้พักแล้ว 1 คน)
+      const candidateRooms = allRooms.filter(r => {
+        const occCount = parseRoomOccupants(r.occupants).length;
+        return r.status === 'ว่าง' || (r.stayType === 'คนเดียว' && occCount < r.capacity);
+      });
+
+      if (candidateRooms.length === 0) {
         Swal.fire({ icon: 'warning', title: 'ไม่มีห้องว่าง', text: 'ขณะนี้ห้องพักเต็มหมดแล้ว กรุณาเพิ่มห้องพักใหม่หรือแก้ไขห้องเดิม' });
         return;
       }
 
       const inputOptions = {};
-      availableRooms.forEach(r => {
-        inputOptions[r.id] = `ห้อง ${r.roomName} (ชั้น ${r.floor} | ${r.stayType} | ${r.bedType} | รองรับ ${r.capacity} คน)`;
+      candidateRooms.forEach(r => {
+        const occList = parseRoomOccupants(r.occupants);
+        const currentNote = occList.length > 0 ? ` | มีผู้พักแล้ว ${occList.length}/${r.capacity}` : ' | ว่าง';
+        inputOptions[r.id] = `ห้อง ${r.roomName} (ชั้น ${r.floor} | ${r.stayType} | ${r.bedType} | รองรับ ${r.capacity} คน${currentNote})`;
       });
 
       Swal.fire({
         title: `จัดห้องพักให้ ${fullName}`,
-        text: `ประเภทผู้เข้าพัก: ${groupType}`,
+        text: `ประเภท: ${groupType} (${totalPeople} คน)`,
         input: 'select',
         inputOptions: inputOptions,
-        inputPlaceholder: '-- เลือกห้องพักที่ว่าง --',
+        inputPlaceholder: '-- เลือกห้องพัก --',
         showCancelButton: true,
         confirmButtonText: 'บันทึกเข้าห้องพัก',
         cancelButtonText: 'ยกเลิก',
@@ -2691,14 +2059,20 @@
           const room = allRooms.find(r => r.id === selectedRoomId);
           if (!room) return;
 
-          const newOccupants = room.occupants ? `${room.occupants}, ${fullName}` : fullName;
+          const occList = parseRoomOccupants(room.occupants);
+          if (!occList.includes(fullName)) {
+            occList.push(fullName);
+          }
+          const newOccupants = occList.join(', ');
+          // หากเป็นห้องครอบครัว หรือจำนวนผู้เข้าพักครบตามความจุ ให้ตั้งสถานะเป็น "เต็ม"
+          const isNowFull = room.stayType === 'ครอบครัว' || occList.length >= room.capacity;
 
           Swal.fire({ title: 'กำลังจัดห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
           try {
             const { error } = await supabaseClient
               .from('rooms')
-              .update({ status: 'เต็ม', occupants: newOccupants })
+              .update({ status: isNowFull ? 'เต็ม' : 'ว่าง', occupants: newOccupants })
               .eq('id', selectedRoomId);
 
             if (error) throw error;
@@ -2707,6 +2081,41 @@
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
           }
+        }
+      });
+    }
+
+    function unassignGuestFromRoom(roomId, fullName) {
+      const room = allRooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      Swal.fire({
+        title: 'นำรายชื่อออกจากห้องพัก?',
+        html: `ต้องการนำ <b>${fullName}</b> ออกจาก <b>ห้อง ${room.roomName}</b> ใช่หรือไม่?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่, นำออกจากห้อง',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#dc2626'
+      }).then(async (result) => {
+        if (!result.isConfirmed) return;
+
+        const remaining = parseRoomOccupants(room.occupants).filter(occ => occ !== fullName);
+        const newOccupants = remaining.join(', ');
+        const newStatus = remaining.length === 0 ? 'ว่าง' : (remaining.length >= room.capacity ? 'เต็ม' : 'ว่าง');
+
+        Swal.fire({ title: 'กำลังอัปเดตห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        try {
+          const { error } = await supabaseClient
+            .from('rooms')
+            .update({ occupants: newOccupants, status: newStatus })
+            .eq('id', roomId);
+          if (error) throw error;
+
+          Swal.fire({ icon: 'success', title: 'นำออกจากห้องพักเรียบร้อย', timer: 1200, showConfirmButton: false });
+          await loadAdminData(false);
+        } catch (err) {
+          Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
         }
       });
     }
@@ -2805,9 +2214,31 @@
       const input = document.getElementById('modalRoomOccupants');
       if (!select.value) return;
 
-      input.value = input.value.trim() ? `${input.value.trim()}, ${select.value}` : select.value;
-      document.getElementById('modalRoomStatus').value = 'เต็ม';
+      const currentList = parseRoomOccupants(input.value);
+      if (!currentList.includes(select.value)) {
+        currentList.push(select.value);
+      }
+      input.value = currentList.join(', ');
+      syncRoomStatusFromOccupants();
       select.value = '';
+    }
+
+    function clearRoomOccupantsInput() {
+      document.getElementById('modalRoomOccupants').value = '';
+      document.getElementById('modalRoomStatus').value = 'ว่าง';
+    }
+
+    function syncRoomStatusFromOccupants() {
+      const occList = parseRoomOccupants(document.getElementById('modalRoomOccupants').value);
+      const stayType = document.getElementById('modalRoomStayType').value;
+      const capacity = Number(document.getElementById('modalRoomCapacity').value) || 1;
+      const statusEl = document.getElementById('modalRoomStatus');
+
+      if (occList.length === 0) {
+        statusEl.value = 'ว่าง';
+      } else if (stayType === 'ครอบครัว' || occList.length >= capacity) {
+        statusEl.value = 'เต็ม';
+      }
     }
 
     document.getElementById('roomEditForm').addEventListener('submit', async function(e) {
