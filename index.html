@@ -558,10 +558,10 @@
           <span class="font-medium">ทั้งหมด <span id="mobileRecordHint">0</span> รายการ</span>
         </div>
         <div class="overflow-x-auto w-full table-scroll-container">
-          <table class="w-full min-w-[920px] text-left border-collapse">
+          <table class="w-full min-w-[980px] text-left border-collapse">
             <thead>
               <tr class="bg-slate-100 text-slate-600 text-[11px] sm:text-xs uppercase tracking-wider border-b border-slate-200">
-                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ลำดับ</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ลำดับ</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">วัน-เวลา</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะ</th>
@@ -576,7 +576,7 @@
             </thead>
             <tbody id="adminTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700">
               <tr>
-                <td colspan="10" class="p-8 text-center text-slate-400">
+                <td colspan="11" class="p-8 text-center text-slate-400">
                   <i class="fas fa-spinner fa-spin text-2xl mb-2 text-blue-600"></i>
                   <p>กำลังโหลดข้อมูล...</p>
                 </td>
@@ -1975,11 +1975,12 @@
       document.getElementById('btnNextPage').disabled = currentAdminPage >= totalPages;
 
       if (pageItems.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400">ไม่พบข้อมูลที่ค้นหา</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-400">ไม่พบข้อมูลที่ค้นหา</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = pageItems.map(item => {
+      tbody.innerHTML = pageItems.map((item, idx) => {
+        const rowNumber = startIdx + idx + 1;
         const isAttend = item.attendanceStatus === 'ร่วมงาน';
         const counts = calculateRecordAgeGroups(item);
         const statusBadge = isAttend
@@ -1996,6 +1997,7 @@
 
         return `
           <tr class="hover:bg-slate-50/90 transition-colors">
+            <td class="p-3 sm:p-3.5 text-center font-semibold text-slate-500 whitespace-nowrap">${rowNumber}</td>
             <td class="p-3 sm:p-3.5 text-xs text-slate-500 whitespace-nowrap">${item.timestamp}</td>
             <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${item.rank}${item.firstName} ${item.lastName}</td>
             <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
@@ -2572,7 +2574,6 @@
     }
 
     function quickAssignGuest(fullName, groupType, totalPeople = 1) {
-      // แสดงห้องที่สถานะ "ว่าง" หรือห้องที่ยังมีที่ว่างเหลือ (เช่น ห้อง 2 คนที่มีผู้พักแล้ว 1 คน)
       const candidateRooms = allRooms.filter(r => {
         const occCount = parseRoomOccupants(r.occupants).length;
         return r.status === 'ว่าง' || (r.stayType === 'คนเดียว' && occCount < r.capacity);
@@ -2614,7 +2615,6 @@
             occList.push(fullName);
           }
           const newOccupants = occList.join(', ');
-          // หากเป็นห้องครอบครัว หรือจำนวนผู้เข้าพักครบตามความจุ ให้ตั้งสถานะเป็น "เต็ม"
           const isNowFull = room.stayType === 'ครอบครัว' || occList.length >= room.capacity;
 
           Swal.fire({ title: 'กำลังจัดห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
