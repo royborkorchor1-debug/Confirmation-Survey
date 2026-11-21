@@ -1152,10 +1152,6 @@
           <textarea id="modalRoomOccupants" rows="2" oninput="syncRoomStatusFromOccupants()" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
         </div>
 
-          <label for="modalRoomOccupants" class="block text-xs font-medium text-slate-700 pt-1">รายชื่อผู้เข้าพักในห้องนี้</label>
-          <textarea id="modalRoomOccupants" rows="2" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
-        </div>
-
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
           <button type="button" onclick="closeRoomModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white text-sm font-medium shadow">บันทึกห้องพัก</button>
@@ -1591,26 +1587,130 @@
           const isAttend = m.attendanceStatus === 'ร่วมงาน';
           const counts = calculateRecordAgeGroups(m);
           const totalPeople = counts.adults + counts.children + counts.infants;
-          const searchPrefix = `${m.rank}${m.firstName}`;
-          const assignedRoom = rooms.find(r => r.occupants && r.occupants.includes(searchPrefix));
+          const assignedRoom = isAttend ? findAssignedRoomForGuest(m, rooms.map(mapRoomRow)) : null;
 
           let roomBadge = '';
           if (!isAttend) {
             roomBadge = `<span class="text-slate-500">ไม่เข้าร่วมงาน (${m.declineReason})</span>`;
           } else if (m.accommodation !== 'ต้องการ') {
             roomBadge = `<span class="text-slate-600 font-medium">ไม่ขอรับการจัดสรรที่พัก</span>`;
+          } else if (assignedRoom) {
+            roomBadge = `
+              <div class="mt-1.5 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
+                <div class="font-bold"><i class="fas fa-door-open mr-1 text-emerald-700"></i>ห้องพักหมายเลข: ${assignedRoom.roomName} (ชั้น ${assignedRoom.floor})</div>
+                <div class="text-xs text-emerald-700 mt-0.5">รูปแบบ: ${assignedRoom.bedType} • ${assignedRoom.stayType}</div>
+              </div>`;
           } else {
-            const assignedRoom = findAssignedRoomForGuest(m, rooms.map(mapRoomRow));
-            if (assignedRoom) {
-              roomBadge = `
-                <div class="mt-1.5 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
-                  <div class="font-bold"><i class="fas fa-door-open mr-1 text-emerald-700"></i>ห้องพักหมายเลข: ${assignedRoom.roomName} (ชั้น ${assignedRoom.floor})</div>
-                  <div class="text-xs text-emerald-700 mt-0.5">รูปแบบ: ${assignedRoom.bedType} • ${assignedRoom.stayType}</div>
-                </div>`;
-            } else {
-              roomBadge = `<span class="inline-block mt-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i>ขอที่พักแล้ว (อยู่ระหว่างเจ้าหน้าที่จัดห้อง)</span>`;
-            }
+            roomBadge = `<span class="inline-block mt-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i>ขอที่พักแล้ว (อยู่ระหว่างเจ้าหน้าที่จัดห้อง)</span>`;
           }
+
+          return `
+            <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-slate-900">${m.rank}${m.firstName} ${m.lastName}</span>
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${isAttend ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                  ${m.attendanceStatus}
+                </span>
+              </div>
+              ${isAttend ? `<p class="text-xs text-slate-600">ยอดร่วมงาน: ผู้ใหญ่ ${m.adultCount} คน${m.childCount > 0 ? ` • บุตร ${m.childCount} คน (${m.childAges})` : ''} (รวม ${totalPeople} คน)</p>` : ''}
+              <div class="text-xs pt-1 border-t border-slate-200/70">
+                <span class="font-semibold text-slate-700">สถานะที่พัก: </span>${roomBadge}
+              </div>
+              <p class="text-[11px] text-slate-400">อัปเดตเมื่อ: ${m.timestamp}</p>
+            </div>
+          `;
+        }).join('');
+
+        Swal.fire({
+          title: '<span class="text-base font-bold text-blue-950">ผลการตรวจสอบข้อมูล</span>',
+          html: `<div class="text-left space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">${cardsHtml}</div>`,
+          confirmButtonText: 'ปิดหน้าต่าง',
+          confirmButtonColor: '#1e3a8a'
+        });
+      });
+    }
+
+    // =========================================================================
+    // ส่วนที่ 2: ระบบเข้าสู่ระบบเจ้าหน้าที่ & จัดการข้อมูลหลังบ้าน (Admin)
+    // =========================================================================
+    function openAdminLogin() {
+      if (!ensureSupabaseReady()) return;
+
+      Swal.fire({
+        title: '<span class="text-lg font-bold text-slate-800"><i class="fas fa-lock mr-2 text-blue-800"></i>เข้าสู่ระบบเจ้าหน้าที่</span>',
+        input: 'password',
+        inputLabel: 'กรุณากรอกรหัสผ่านเจ้าหน้าที่',
+        inputPlaceholder: 'รหัสผ่าน...',
+        showCancelButton: true,
+        confirmButtonText: 'เข้าสู่ระบบ',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#1e3a8a',
+        inputValidator: (value) => {
+          if (!value) return 'กรุณากรอกรหัสผ่าน!';
+          if (value.trim() !== systemConfig.adminPassword) {
+            return 'รหัสผ่านไม่ถูกต้อง!';
+          }
+        }
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          document.getElementById('landingView').classList.add('hidden');
+          document.getElementById('publicView').classList.add('hidden');
+          document.getElementById('adminView').classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          await loadAdminData(false);
+          subscribeToRealtimeChanges();
+        }
+      });
+    }
+
+    function logoutAdmin() {
+      if (realtimeChannel && supabaseClient) {
+        supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+      backToLanding();
+    }
+
+    function subscribeToRealtimeChanges() {
+      if (!supabaseClient || realtimeChannel) return;
+
+      realtimeChannel = supabaseClient
+        .channel('party-admin-realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => {
+          loadAdminData(false);
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
+          loadAdminData(false);
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, () => {
+          fetchSystemConfig();
+        })
+        .subscribe((status) => {
+          const dot = document.getElementById('realtimeStatusDot');
+          const txt = document.getElementById('realtimeStatusText');
+          if (status === 'SUBSCRIBED') {
+            if (dot) dot.className = 'w-2 h-2 shrink-0 rounded-full bg-emerald-400 animate-pulse';
+            if (txt) txt.innerText = 'เชื่อมต่อ Supabase Real-time สำเร็จ';
+          }
+        });
+    }
+
+    function mapRegistrationRow(row) {
+      return {
+        id: row.id,
+        timestamp: formatThaiDateTime(row.created_at),
+        rank: row.rank || '',
+        firstName: row.first_name || '',
+        lastName: row.last_name || '',
+        attendanceStatus: row.attendance_status || '',
+        declineReason: row.decline_reason || '-',
+        adultCount: Number(row.adult_count) || 0,
+        childCount: Number(row.child_count) || 0,
+        childAges: row.child_ages || '-',
+        accommodation: row.accommodation || '-'
+      };
+    }
+
     function mapRoomRow(row) {
       return {
         id: row.id,
@@ -1646,6 +1746,387 @@
           return normOcc === fullName || compactOcc === compactFullName || normOcc.includes(fullName);
         });
       }) || null;
+    }
+
+    async function loadAdminData(showToast = false) {
+      if (!ensureSupabaseReady()) return;
+      const icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('fa-spin');
+
+      try {
+        const [regRes, roomRes] = await Promise.all([
+          supabaseClient.from('registrations').select('*').order('id', { ascending: false }),
+          supabaseClient.from('rooms').select('*').order('floor', { ascending: true }).order('room_name', { ascending: true })
+        ]);
+
+        if (regRes.error) throw regRes.error;
+        if (roomRes.error) throw roomRes.error;
+
+        allRecords = (regRes.data || []).map(mapRegistrationRow);
+        allRooms = (roomRes.data || []).map(mapRoomRow);
+
+        updateDashboardStats();
+        renderAdminTable();
+        renderAllRoomViews();
+        renderSummaryReport();
+
+        if (showToast) {
+          Swal.fire({
+            icon: 'success',
+            title: 'รีเฟรชข้อมูลล่าสุดแล้ว',
+            timer: 1000,
+            showConfirmButton: false
+          });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'โหลดข้อมูลไม่สำเร็จ', text: err.message || String(err) });
+      } finally {
+        if (icon) icon.classList.remove('fa-spin');
+      }
+    }
+
+    // สลับแท็บหลักในหน้าเจ้าหน้าที่
+    function switchAdminMainTab(tab) {
+      const tabs = ['survey', 'rooms', 'summary', 'settings'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`admin${t.charAt(0).toUpperCase() + t.slice(1)}Section`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (sec) sec.classList.toggle('hidden', t !== tab);
+        if (btn) {
+          btn.className = t === tab
+            ? 'w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-blue-900 text-white shadow-sm'
+            : 'w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100';
+        }
+      });
+
+      if (tab === 'rooms') renderAllRoomViews();
+      if (tab === 'summary') renderSummaryReport();
+    }
+
+    // สลับแท็บย่อยในหน้าจัดการที่พัก
+    function switchRoomSubTab(subTab) {
+      const map = {
+        map: { sec: 'roomSubMap', btn: 'subTabMap' },
+        assign: { sec: 'roomSubAssign', btn: 'subTabAssign' },
+        details: { sec: 'roomSubDetails', btn: 'subTabDetails' }
+      };
+
+      Object.keys(map).forEach(key => {
+        const secEl = document.getElementById(map[key].sec);
+        const btnEl = document.getElementById(map[key].btn);
+        if (secEl) secEl.classList.toggle('hidden', key !== subTab);
+        if (btnEl) {
+          btnEl.className = key === subTab
+            ? 'w-full lg:w-auto px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 bg-indigo-900 text-white shadow-sm'
+            : 'w-full lg:w-auto px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100';
+        }
+      });
+
+      renderAllRoomViews();
+    }
+
+    // บันทึกการตั้งค่าระบบ
+    async function saveSystemSettings(e) {
+      e.preventDefault();
+      if (!ensureSupabaseReady()) return;
+
+      const newName = document.getElementById('settingSystemName').value.trim();
+      const newStatus = document.getElementById('settingRegistrationStatus').value;
+
+      Swal.fire({ title: 'กำลังบันทึกการตั้งค่า...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        const { error } = await supabaseClient
+          .from('system_settings')
+          .upsert([
+            { config_key: 'system_name', config_value: newName },
+            { config_key: 'reg_status', config_value: newStatus }
+          ], { onConflict: 'config_key' });
+
+        if (error) throw error;
+
+        systemConfig.systemName = newName;
+        systemConfig.regStatus = newStatus;
+        applySystemConfig();
+
+        Swal.fire({ icon: 'success', title: 'บันทึกการตั้งค่าเรียบร้อยแล้ว', timer: 1300, showConfirmButton: false });
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'บันทึกไม่สำเร็จ', text: err.message || String(err) });
+      }
+    }
+
+    // แยกช่วงอายุผู้เข้าร่วมงานในแต่ละรายการ
+    function calculateRecordAgeGroups(item) {
+      let adults = Number(item.adultCount) || 0;
+      let children = 0;
+      let infants = 0;
+
+      const childCount = Number(item.childCount) || 0;
+      const agesStr = (item.childAges || '').toString();
+
+      if (childCount > 0) {
+        const parts = agesStr.split(',').map(s => s.trim()).filter(Boolean);
+        if (parts.length > 0) {
+          parts.forEach(part => {
+            const numMatch = part.match(/(\d+(\.\d+)?)/);
+            const val = numMatch ? parseFloat(numMatch[1]) : 0;
+            if (part.includes('เดือน') || part.includes('วัน')) {
+              infants += 1;
+            } else if (val >= 13) {
+              adults += 1;
+            } else if (val >= 5) {
+              children += 1;
+            } else {
+              infants += 1;
+            }
+          });
+          const parsedTotal = parts.length;
+          if (parsedTotal < childCount) {
+            children += (childCount - parsedTotal);
+          }
+        } else {
+          children += childCount;
+        }
+      }
+
+      return { adults, children, infants };
+    }
+
+    // อัปเดตการ์ดตัวเลขบนแดชบอร์ด
+    function updateDashboardStats() {
+      let totalRecords = allRecords.length;
+      let attendCount = 0;
+      let declineCount = 0;
+      let totalAdults = 0;
+      let totalChildren = 0;
+      let totalInfants = 0;
+      let wantRoom = 0;
+      let noRoom = 0;
+
+      allRecords.forEach(item => {
+        if (item.attendanceStatus === 'ร่วมงาน') {
+          attendCount++;
+          const g = calculateRecordAgeGroups(item);
+          totalAdults += g.adults;
+          totalChildren += g.children;
+          totalInfants += g.infants;
+          if (item.accommodation === 'ต้องการ') wantRoom++;
+          else noRoom++;
+        } else {
+          declineCount++;
+        }
+      });
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      setTxt('statTotalRecords', totalRecords);
+      setTxt('statAttend', attendCount);
+      setTxt('statDecline', declineCount);
+      setTxt('statTotalPeople', totalAdults + totalChildren + totalInfants);
+      setTxt('statAdults', totalAdults);
+      setTxt('statChildren', totalChildren);
+      setTxt('statInfants', totalInfants);
+      setTxt('statRooms', wantRoom);
+      setTxt('statNoRooms', noRoom);
+    }
+
+    // กรองและแสดงตารางรายชื่อผู้ลงทะเบียน (แบ่งหน้าละ 10 รายการ)
+    function resetAndRenderAdminTable() {
+      currentAdminPage = 1;
+      renderAdminTable();
+    }
+
+    function changeAdminPage(delta) {
+      currentAdminPage += delta;
+      renderAdminTable();
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      const filterStatus = document.getElementById('filterStatus').value;
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const filtered = allRecords.filter(item => {
+        let matchFilter = true;
+        if (filterStatus === 'ร่วมงาน') matchFilter = item.attendanceStatus === 'ร่วมงาน';
+        else if (filterStatus === 'สละสิทธิ์') matchFilter = item.attendanceStatus === 'สละสิทธิ์';
+        else if (filterStatus === 'WANT_ROOM') matchFilter = item.attendanceStatus === 'ร่วมงาน' && item.accommodation === 'ต้องการ';
+
+        const fullText = `${item.rank}${item.firstName} ${item.lastName} ${item.declineReason}`.toLowerCase();
+        const matchSearch = !search || fullText.includes(search);
+        return matchFilter && matchSearch;
+      });
+
+      const mobileHint = document.getElementById('mobileRecordHint');
+      if (mobileHint) mobileHint.innerText = filtered.length;
+
+      const totalItems = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalItems / ADMIN_PAGE_SIZE));
+      if (currentAdminPage > totalPages) currentAdminPage = totalPages;
+      if (currentAdminPage < 1) currentAdminPage = 1;
+
+      const startIdx = (currentAdminPage - 1) * ADMIN_PAGE_SIZE;
+      const pageItems = filtered.slice(startIdx, startIdx + ADMIN_PAGE_SIZE);
+
+      document.getElementById('paginationInfoText').innerText = totalItems === 0
+        ? 'แสดง 0 - 0 จากทั้งหมด 0 รายชื่อ'
+        : `แสดง ${startIdx + 1} - ${Math.min(startIdx + ADMIN_PAGE_SIZE, totalItems)} จากทั้งหมด ${totalItems} รายชื่อ`;
+      document.getElementById('pageIndicatorText').innerText = `หน้า ${currentAdminPage} / ${totalPages}`;
+      document.getElementById('btnPrevPage').disabled = currentAdminPage <= 1;
+      document.getElementById('btnNextPage').disabled = currentAdminPage >= totalPages;
+
+      if (pageItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400">ไม่พบข้อมูลที่ค้นหา</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = pageItems.map(item => {
+        const isAttend = item.attendanceStatus === 'ร่วมงาน';
+        const counts = calculateRecordAgeGroups(item);
+        const statusBadge = isAttend
+          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">ร่วมงาน</span>`
+          : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">สละสิทธิ์</span>`;
+
+        const accBadge = !isAttend
+          ? '-'
+          : (item.accommodation === 'ต้องการ'
+              ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800">ต้องการ</span>`
+              : `<span class="text-slate-500 text-xs">ไม่ต้องการ</span>`);
+
+        const safeName = `${item.rank}${item.firstName} ${item.lastName}`.replace(/'/g, "\\'");
+
+        return `
+          <tr class="hover:bg-slate-50/90 transition-colors">
+            <td class="p-3 sm:p-3.5 text-xs text-slate-500 whitespace-nowrap">${item.timestamp}</td>
+            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${item.rank}${item.firstName} ${item.lastName}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.adults : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.children : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.infants : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-600">${isAttend ? (item.childAges || '-') : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${accBadge}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-500 max-w-[180px] truncate" title="${item.declineReason || '-'}">${!isAttend ? (item.declineReason || '-') : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">
+              <button type="button" onclick="openFormModal('edit', ${item.id})" title="แก้ไขข้อมูล"
+                class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" onclick="confirmDeleteRecord(${item.id}, '${safeName}')" title="ลบข้อมูล"
+                class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Modal เพิ่ม / แก้ไขข้อมูลผู้ลงทะเบียน
+    function openFormModal(mode, recordId = null) {
+      const modal = document.getElementById('adminFormModal');
+      const title = document.getElementById('modalTitle');
+      document.getElementById('adminEditForm').reset();
+
+      if (mode === 'add') {
+        title.innerText = 'เพิ่มรายชื่อผู้ลงทะเบียนใหม่';
+        document.getElementById('editRecordId').value = '';
+        document.getElementById('modalStatus').value = 'ร่วมงาน';
+      } else {
+        title.innerText = 'แก้ไขข้อมูลผู้ลงทะเบียน';
+        const rec = allRecords.find(r => r.id === recordId);
+        if (!rec) return;
+
+        document.getElementById('editRecordId').value = rec.id;
+        document.getElementById('modalRank').value = rec.rank;
+        document.getElementById('modalFirstName').value = rec.firstName;
+        document.getElementById('modalLastName').value = rec.lastName;
+        document.getElementById('modalStatus').value = rec.attendanceStatus;
+        document.getElementById('modalDeclineReason').value = rec.declineReason === '-' ? '' : rec.declineReason;
+        document.getElementById('modalAdultCount').value = rec.adultCount || 1;
+        document.getElementById('modalChildCount').value = rec.childCount || 0;
+        document.getElementById('modalChildAges').value = rec.childAges === '-' ? '' : rec.childAges;
+        document.getElementById('modalAccommodation').value = rec.accommodation === 'ต้องการ' ? 'ต้องการ' : 'ไม่ต้องการ';
+      }
+
+      toggleModalFields();
+      toggleModalChildAges();
+      modal.classList.remove('hidden');
+    }
+
+    function closeFormModal() {
+      document.getElementById('adminFormModal').classList.add('hidden');
+    }
+
+    function toggleModalFields() {
+      const status = document.getElementById('modalStatus').value;
+      document.getElementById('modalDeclineBox').classList.toggle('hidden', status !== 'สละสิทธิ์');
+      document.getElementById('modalAttendBox').classList.toggle('hidden', status !== 'ร่วมงาน');
+    }
+
+    function toggleModalChildAges() {
+      const count = parseInt(document.getElementById('modalChildCount').value) || 0;
+      document.getElementById('modalChildAgesBox').classList.toggle('hidden', count <= 0);
+    }
+
+    document.getElementById('adminEditForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!ensureSupabaseReady()) return;
+
+      const recordId = document.getElementById('editRecordId').value;
+      const status = document.getElementById('modalStatus').value;
+      const childCount = status === 'ร่วมงาน' ? (Number(document.getElementById('modalChildCount').value) || 0) : 0;
+
+      const payload = {
+        rank: document.getElementById('modalRank').value,
+        first_name: document.getElementById('modalFirstName').value.trim(),
+        last_name: document.getElementById('modalLastName').value.trim(),
+        attendance_status: status,
+        decline_reason: status === 'สละสิทธิ์' ? (document.getElementById('modalDeclineReason').value.trim() || '-') : '-',
+        adult_count: status === 'ร่วมงาน' ? Number(document.getElementById('modalAdultCount').value) : 0,
+        child_count: childCount,
+        child_ages: (status === 'ร่วมงาน' && childCount > 0) ? (document.getElementById('modalChildAges').value.trim() || '-') : '-',
+        accommodation: status === 'ร่วมงาน' ? document.getElementById('modalAccommodation').value : '-'
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      try {
+        if (recordId === '') {
+          payload.created_at = new Date().toISOString();
+          const { error } = await supabaseClient.from('registrations').insert([payload]);
+          if (error) throw error;
+        } else {
+          const { error } = await supabaseClient.from('registrations').update(payload).eq('id', Number(recordId));
+          if (error) throw error;
+        }
+        closeFormModal();
+        Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลสำเร็จ!', timer: 1200, showConfirmButton: false });
+        await loadAdminData(false);
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
+      }
+    });
+
+    function confirmDeleteRecord(recordId, fullName) {
+      Swal.fire({
+        title: 'ยืนยันการลบรายชื่อ?',
+        html: `คุณต้องการลบข้อมูลของ <b>${fullName}</b> ใช่หรือไม่?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่, ลบข้อมูล',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#dc2626'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          try {
+            const { error } = await supabaseClient.from('registrations').delete().eq('id', recordId);
+            if (error) throw error;
+            Swal.fire({ icon: 'success', title: 'ลบข้อมูลเรียบร้อยแล้ว', timer: 1200, showConfirmButton: false });
+            await loadAdminData(false);
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
+          }
+        }
+      });
     }
 
     // =========================================================================
@@ -1703,6 +2184,74 @@
           assignedRoom ? assignedRoom.floor : '-',
           !isAttend ? (item.declineReason || '-') : '-'
         ].map(escapeCSV).join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const dateStamp = new Date().toISOString().slice(0, 10);
+      link.href = url;
+      link.download = `รายชื่อลงทะเบียนงานเลี้ยง_${dateStamp}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // ประมวลผลหน้าสรุปข้อมูลภาพรวม (Summary Report)
+    // =========================================================================
+    function renderSummaryReport() {
+      let totalRecords = allRecords.length;
+      let attendCount = 0;
+      let declineCount = 0;
+      let totalAdults = 0;
+      let totalChildren = 0;
+      let totalInfants = 0;
+      let wantRoomCount = 0;
+      let noRoomCount = 0;
+
+      let soloCount = 0;
+      let soloPeople = 0;
+      let familyCount = 0;
+      let familyPeople = 0;
+      let coupleOnlyCount = 0;
+      let coupleOnlyPeople = 0;
+      let withChildrenCount = 0;
+      let withChildrenPeople = 0;
+      const declineList = [];
+
+      allRecords.forEach(item => {
+        if (item.attendanceStatus === 'ร่วมงาน') {
+          attendCount++;
+          const counts = calculateRecordAgeGroups(item);
+          const p = counts.adults + counts.children + counts.infants;
+          totalAdults += counts.adults;
+          totalChildren += counts.children;
+          totalInfants += counts.infants;
+
+          if (item.accommodation === 'ต้องการ') wantRoomCount++;
+          else noRoomCount++;
+
+          if (p === 1) {
+            soloCount++;
+            soloPeople += p;
+          } else {
+            familyCount++;
+            familyPeople += p;
+            if ((Number(item.childCount) || 0) === 0) {
+              coupleOnlyCount++;
+              coupleOnlyPeople += p;
+            } else {
+              withChildrenCount++;
+              withChildrenPeople += p;
+            }
+          }
+        } else {
+          declineCount++;
+          declineList.push(item);
+        }
       });
 
       const totalPeople = totalAdults + totalChildren + totalInfants;
