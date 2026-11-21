@@ -1409,6 +1409,7 @@
       const lastName = document.getElementById('lastName').value.trim();
 
       const payload = {
+        created_at: new Date().toISOString(),
         rank: rank,
         first_name: firstName,
         last_name: lastName,
@@ -2136,6 +2137,7 @@
       const childCount = status === 'ร่วมงาน' ? (parseInt(document.getElementById('modalChildCount').value) || 0) : 0;
 
       const payload = {
+        created_at: new Date().toISOString(),
         rank: document.getElementById('modalRank').value,
         first_name: document.getElementById('modalFirstName').value.trim(),
         last_name: document.getElementById('modalLastName').value.trim(),
