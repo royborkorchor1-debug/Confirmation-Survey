@@ -109,7 +109,7 @@
           <span>ยังไม่ได้เชื่อมต่อฐานข้อมูล Supabase</span>
         </div>
         <p class="text-[11px] text-amber-800 leading-relaxed">
-          กรุณานำค่า <b>Project URL</b> และ <b>Anon Public Key</b> จาก Supabase มาใส่ในตัวแปร <code>SUPABASE_URL</code> และ <code>SUPABASE_ANON_KEY</code> ในไฟล์ <code>index.html</code>
+          กรุณานำค่า <b>Project URL</b> และ <b>Anon Public Key</b> จาก Supabase มาใส่ในตัวแปร <code>RAW_SUPABASE_URL</code> และ <code>SUPABASE_ANON_KEY</code> ในไฟล์ <code>index.html</code>
         </p>
       </div>
 
@@ -118,7 +118,7 @@
           <i class="fas fa-lock"></i>
           <span id="systemStatusBannerTitle">ขณะนี้ระบบปิดรับการลงทะเบียน</span>
         </div>
-        <p id="systemStatusBannerDesc" class="text-[11px] text-red-600"></p>
+        <p id="systemStatusBannerDesc" class="text-[11px] text-red-600">กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ</p>
       </div>
 
       <div class="pt-1 pb-1 flex flex-col items-center gap-2.5">
@@ -978,45 +978,174 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 5: Modal แสดงคิวอาร์โค้ดรายบุคคลสำหรับเช็คอิน (Personal QR Modal) -->
+  <!-- ส่วนที่ 3: Modal เพิ่ม/แก้ไขข้อมูลผู้ลงทะเบียน (Admin Registration Modal) -->
   <!-- ===================================================================== -->
-  <div id="personalQrModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden my-auto fade-in">
-      <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 px-5 py-4 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="fas fa-qrcode text-amber-300 text-lg"></i>
-          <h3 class="font-bold text-base">บัตรคิวอาร์โค้ดเช็คอิน</h3>
-        </div>
-        <button type="button" onclick="closePersonalQrModal()" class="text-white/80 hover:text-white text-xl">
+  <div id="adminFormModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto fade-in">
+      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 px-5 py-4 text-white flex items-center justify-between">
+        <h3 id="modalTitle" class="font-bold text-base">เพิ่ม/แก้ไขข้อมูลสมาชิก</h3>
+        <button type="button" onclick="closeFormModal()" class="text-white/80 hover:text-white text-xl">
           <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <div class="p-5 text-center space-y-3.5">
-        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/80 space-y-1">
-          <div id="qrMemberName" class="font-bold text-base text-slate-900">-</div>
-          <div id="qrMemberCode" class="text-xs font-mono font-semibold text-blue-800 bg-blue-100/80 inline-block px-2.5 py-0.5 rounded-full">CODE: -</div>
-          <div id="qrMemberSummary" class="text-xs text-slate-600 pt-1">-</div>
-          <div id="qrMemberRoom" class="text-xs font-medium text-emerald-700">-</div>
+      <form id="adminEditForm" class="p-5 space-y-4">
+        <input type="hidden" id="editRecordId">
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label for="modalRank" class="block text-xs font-medium text-slate-700 mb-1">ยศ *</label>
+            <select id="modalRank" required class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+              <option value="ส.ต.">ส.ต.</option>
+              <option value="ส.ท.">ส.ท.</option>
+              <option value="ส.อ.">ส.อ.</option>
+              <option value="จ.ส.ต.">จ.ส.ต.</option>
+              <option value="จ.ส.ท.">จ.ส.ท.</option>
+              <option value="จ.ส.อ.">จ.ส.อ.</option>
+              <option value="ร.ต.">ร.ต.</option>
+              <option value="ร.ท.">ร.ท.</option>
+              <option value="ร.อ.">ร.อ.</option>
+              <option value="พ.ต.">พ.ต.</option>
+              <option value="พ.ท.">พ.ท.</option>
+            </select>
+          </div>
+          <div>
+            <label for="modalFirstName" class="block text-xs font-medium text-slate-700 mb-1">ชื่อ *</label>
+            <input type="text" id="modalFirstName" required class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label for="modalLastName" class="block text-xs font-medium text-slate-700 mb-1">นามสกุล *</label>
+            <input type="text" id="modalLastName" required class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
         </div>
 
-        <div class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl border-2 border-dashed border-blue-200">
-          <div id="qrCodeCanvasBox" class="flex items-center justify-center"></div>
-          <p class="text-[11px] text-slate-400 mt-2.5">แสดง QR Code นี้ต่อเจ้าหน้าที่ ณ จุดลงทะเบียนหน้างาน</p>
+        <div>
+          <label for="modalStatus" class="block text-xs font-medium text-slate-700 mb-1">สถานะการเข้าร่วมงาน *</label>
+          <select id="modalStatus" onchange="toggleModalFields()" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+            <option value="ร่วมงาน">ร่วมงาน</option>
+            <option value="สละสิทธิ์">สละสิทธิ์</option>
+          </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-2.5 pt-1">
-          <button type="button" onclick="downloadPersonalQrImage()"
-            class="w-full py-2.5 px-3 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5">
-            <i class="fas fa-download"></i>
-            <span>บันทึกรูป QR</span>
-          </button>
-          <button type="button" onclick="closePersonalQrModal()"
-            class="w-full py-2.5 px-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium transition-all">
-            ปิดหน้าต่าง
-          </button>
+        <div id="modalDeclineBox" class="hidden space-y-1">
+          <label for="modalDeclineReason" class="block text-xs font-medium text-red-700">เหตุผลการสละสิทธิ์</label>
+          <input type="text" id="modalDeclineReason" placeholder="ระบุเหตุผล..." class="w-full rounded-xl border border-red-200 bg-red-50/40 px-3 py-2 text-sm">
         </div>
+
+        <div id="modalAttendBox" class="space-y-3 bg-blue-50/50 p-3.5 rounded-xl border border-blue-100">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="modalAdultCount" class="block text-xs font-medium text-slate-700 mb-1">จำนวนยอด (ตนเอง/ภรรยา)</label>
+              <select id="modalAdultCount" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm">
+                <option value="1">1 คน</option>
+                <option value="2">2 คน</option>
+              </select>
+            </div>
+            <div>
+              <label for="modalChildCount" class="block text-xs font-medium text-slate-700 mb-1">จำนวนยอด (บุตร)</label>
+              <input type="number" id="modalChildCount" min="0" max="10" value="0" oninput="toggleModalChildAges()" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm">
+            </div>
+          </div>
+
+          <div id="modalChildAgesBox" class="hidden space-y-1">
+            <label for="modalChildAges" class="block text-xs font-medium text-purple-800">รายละเอียดอายุบุตร</label>
+            <input type="text" id="modalChildAges" placeholder="เช่น อายุ 8 ปี, อายุ 3 ปี" class="w-full rounded-xl border border-purple-200 bg-white px-3 py-2 text-sm">
+          </div>
+
+          <div>
+            <label for="modalAccommodation" class="block text-xs font-medium text-slate-700 mb-1">ความต้องการที่พัก</label>
+            <select id="modalAccommodation" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm">
+              <option value="ต้องการ">ต้องการ</option>
+              <option value="ไม่ต้องการ">ไม่ต้องการ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeFormModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-sm font-medium shadow">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- ส่วนที่ 4: Modal เพิ่ม/แก้ไขห้องพักโรงแรม (Room Management Modal) -->
+  <!-- ===================================================================== -->
+  <div id="roomFormModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto fade-in">
+      <div class="bg-gradient-to-r from-indigo-900 to-blue-900 px-5 py-4 text-white flex items-center justify-between">
+        <h3 id="roomModalTitle" class="font-bold text-base">จัดการห้องพัก</h3>
+        <button type="button" onclick="closeRoomModal()" class="text-white/80 hover:text-white text-xl">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
+
+      <form id="roomEditForm" class="p-5 space-y-4">
+        <input type="hidden" id="editRoomId">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="modalRoomName" class="block text-xs font-medium text-slate-700 mb-1">ชื่อห้อง / หมายเลขห้อง *</label>
+            <input type="text" id="modalRoomName" required placeholder="เช่น 201, VIP-1" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label for="modalRoomFloor" class="block text-xs font-medium text-slate-700 mb-1">ชั้น *</label>
+            <input type="text" id="modalRoomFloor" required placeholder="เช่น 1, 2, 3" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label for="modalRoomBedType" class="block text-xs font-medium text-slate-700 mb-1">ประเภทเตียง</label>
+            <select id="modalRoomBedType" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+              <option value="เตียงเดี่ยว">เตียงเดี่ยว</option>
+              <option value="เตียงคู่">เตียงคู่</option>
+              <option value="2 เตียงเดี่ยว">2 เตียงเดี่ยว</option>
+              <option value="ห้องครอบครัว">ห้องครอบครัว</option>
+            </select>
+          </div>
+          <div>
+            <label for="modalRoomStayType" class="block text-xs font-medium text-slate-700 mb-1">รูปแบบเข้าพัก</label>
+            <select id="modalRoomStayType" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+              <option value="คนเดียว">คนเดียว</option>
+              <option value="ครอบครัว">ครอบครัว</option>
+            </select>
+          </div>
+          <div>
+            <label for="modalRoomCapacity" class="block text-xs font-medium text-slate-700 mb-1">รองรับ (คน)</label>
+            <input type="number" id="modalRoomCapacity" min="1" max="10" value="2" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div>
+          <label for="modalRoomStatus" class="block text-xs font-medium text-slate-700 mb-1">สถานะห้องพัก</label>
+          <select id="modalRoomStatus" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+            <option value="ว่าง">ว่าง</option>
+            <option value="เต็ม">เต็ม</option>
+          </select>
+        </div>
+
+        <div class="space-y-2 bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100">
+          <label for="selectGuestForRoom" class="block text-xs font-medium text-indigo-900">เลือกผู้ลงทะเบียนที่ขอที่พักเพื่อเพิ่มเข้าห้องนี้</label>
+          <div class="flex gap-2">
+            <select id="selectGuestForRoom" class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm">
+              <option value="">-- เลือกรายชื่อ --</option>
+            </select>
+            <button type="button" onclick="appendGuestToRoomInput()" class="px-3.5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-medium shrink-0">
+              + เพิ่มชื่อ
+            </button>
+          </div>
+
+          <label for="modalRoomOccupants" class="block text-xs font-medium text-slate-700 pt-1">รายชื่อผู้เข้าพักในห้องนี้</label>
+          <textarea id="modalRoomOccupants" rows="2" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeRoomModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white text-sm font-medium shadow">บันทึกห้องพัก</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1034,12 +1163,10 @@
     function normalizeSupabaseUrl(rawUrl) {
       if (!rawUrl || rawUrl.includes('YOUR_SUPABASE')) return '';
       let cleaned = rawUrl.trim().replace(/\/+$/, '');
-      // กรณีเผลอก๊อปปี้ลิงก์หน้า Dashboard (https://supabase.com/dashboard/project/xxxxx) มาใส่
       const dashMatch = cleaned.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);
       if (dashMatch && dashMatch[1]) {
         return `https://${dashMatch[1]}.supabase.co`;
       }
-      // ตัด path ส่วนเกินออกให้เหลือแค่ origin (เช่น https://xxxxx.supabase.co)
       try {
         const parsed = new URL(cleaned);
         return parsed.origin;
@@ -1091,7 +1218,8 @@
     // ส่วนที่ 0: การเริ่มต้นระบบ และการนำทางหน้าแรก
     // =========================================================================
     window.addEventListener('DOMContentLoaded', async function() {
-      if (!isSupabaseConfigured) {
+      applySystemConfig();
+      if (!isSupabaseConfigured || !supabaseClient) {
         document.getElementById('supabaseConfigWarning').classList.remove('hidden');
         return;
       }
@@ -1163,8 +1291,8 @@
       if (!supabaseClient) {
         Swal.fire({
           icon: 'warning',
-          title: 'ยังไม่ได้ตั้งค่า Supabase',
-          text: 'กรุณาใส่ SUPABASE_URL และ SUPABASE_ANON_KEY ในไฟล์ index.html ก่อนใช้งาน',
+          title: 'ยังไม่ได้เชื่อมต่อ Supabase',
+          text: 'กรุณาตรวจสอบการตั้งค่า Supabase URL และ Anon Key ในไฟล์ index.html',
           confirmButtonColor: '#1e3a8a'
         });
         return false;
@@ -1309,7 +1437,6 @@
       });
 
       try {
-        // 1. ตรวจสอบรายชื่อซ้ำ (ยศ + ชื่อ + นามสกุล)
         if (!forceUpdate) {
           const { data: duplicates, error: dupErr } = await supabaseClient
             .from('registrations')
@@ -1351,7 +1478,6 @@
           }
         }
 
-        // 2. บันทึกใหม่หรืออัปเดตทับข้อมูลเดิม
         if (forceUpdate && existingId) {
           payload.created_at = new Date().toISOString();
           const { error: updErr } = await supabaseClient
@@ -1482,15 +1608,6 @@
                 </div>
               ` : ''}
               <div class="text-xs pt-1">${roomBadge}</div>
-              ${isAttend ? `
-                <div class="pt-2">
-                  <button type="button" onclick="Swal.close(); openPersonalQrModal(mapRegistrationRow(${JSON.stringify(raw).replace(/"/g, '&quot;')}), ${assignedRoom ? JSON.stringify(assignedRoom).replace(/"/g, '&quot;') : 'null'})"
-                    class="w-full py-2 px-3 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fas fa-qrcode text-amber-300"></i>
-                    <span>แสดง QR Code เช็คอินเข้างาน</span>
-                  </button>
-                </div>
-              <div class="text-xs pt-1">${roomBadge}</div>
             </div>
           `;
         }).join('');
@@ -1504,7 +1621,6 @@
       });
     }
 
-    // แปลงข้อมูลแถวจาก Supabase ให้เข้ากับโครงสร้างของหน้าเว็บ
     function mapRegistrationRow(row) {
       return {
         id: row.id,
@@ -1666,9 +1782,6 @@
       backToLanding();
     }
 
-    /**
-     * เปิดการเชื่อมต่อ Supabase Real-time อัปเดตข้อมูลทันทีเมื่อมีการเปลี่ยนแปลงในฐานข้อมูล
-     */
     function subscribeRealtimeChanges() {
       if (!supabaseClient) return;
       if (realtimeChannel) {
@@ -1696,9 +1809,6 @@
         });
     }
 
-    /**
-     * โหลดข้อมูลทั้งหมดพร้อมกันแบบ Parallel (เร็วมาก < 0.2 วินาที)
-     */
     async function loadAdminData(showSpinner = false) {
       if (!supabaseClient) return;
       const refreshIcon = document.getElementById('refreshIcon');
@@ -2024,6 +2134,8 @@
 
     document.getElementById('adminEditForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      if (!ensureSupabaseReady()) return;
+
       const recordId = document.getElementById('editRecordId').value;
       const status = document.getElementById('modalStatus').value;
       const childCount = status === 'ร่วมงาน' ? (parseInt(document.getElementById('modalChildCount').value) || 0) : 0;
@@ -2700,6 +2812,8 @@
 
     document.getElementById('roomEditForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      if (!ensureSupabaseReady()) return;
+
       const roomId = document.getElementById('editRoomId').value;
 
       const payload = {
