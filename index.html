@@ -90,7 +90,7 @@
       <h1 id="landingSystemTitle" class="text-xl sm:text-2xl font-bold tracking-wide leading-snug">
         งานเลี้ยงสังสรรค์<br>กำลังพลและครอบครัว ประจำปี 2569
       </h1>
-      <p class="text-blue-200 text-xs mt-2 font-light max-w-sm mx-auto leading-relaxed">
+      <p id="landingSystemDesc" class="text-blue-200 text-xs mt-2 font-light max-w-sm mx-auto leading-relaxed">
         ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน เพื่อใช้เป็นข้อมูลในการจัดเตรียมสถานที่ อาหาร และห้องพักให้เหมาะสม
       </p>
 
@@ -808,14 +808,32 @@
           </div>
 
           <div>
-            <label for="settingRegistrationStatus" class="block text-sm font-medium text-slate-700 mb-1.5">
-              <i class="fas fa-toggle-on text-emerald-600 mr-1.5"></i>สถานะการเปิด-ปิดระบบ <span class="text-red-500">*</span>
+            <label for="settingSystemDesc" class="block text-sm font-medium text-slate-700 mb-1.5">
+              <i class="fas fa-align-left text-indigo-600 mr-1.5"></i>คำอธิบาย / รายละเอียดหน้าแรก
             </label>
-            <select id="settingRegistrationStatus"
-              class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
-              <option value="OPEN">เปิดระบบ (รับลงทะเบียน)</option>
-              <option value="CLOSED">ปิดระบบ (งดรับลงทะเบียนชั่วคราว)</option>
-            </select>
+            <textarea id="settingSystemDesc" rows="2" placeholder="เช่น ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน..."
+              class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="settingRegistrationStatus" class="block text-sm font-medium text-slate-700 mb-1.5">
+                <i class="fas fa-toggle-on text-emerald-600 mr-1.5"></i>สถานะการเปิด-ปิดระบบ <span class="text-red-500">*</span>
+              </label>
+              <select id="settingRegistrationStatus"
+                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+                <option value="OPEN">เปิดระบบ (รับลงทะเบียน)</option>
+                <option value="CLOSED">ปิดระบบ (งดรับลงทะเบียนชั่วคราว)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="settingDeadline" class="block text-sm font-medium text-slate-700 mb-1.5">
+                <i class="fas fa-calendar-times text-amber-600 mr-1.5"></i>วัน-เวลาปิดรับลงทะเบียน (ถ้ามี)
+              </label>
+              <input type="datetime-local" id="settingDeadline"
+                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+            </div>
           </div>
 
           <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
@@ -1245,7 +1263,9 @@
     let currentAdminUser = null;
     let systemConfig = {
       systemName: 'แบบสำรวจสมาชิกยืนยันยอดร่วมงานเลี้ยงสังสรรค์ ประจำปี 2569',
-      regStatus: 'OPEN'
+      systemDesc: 'ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน เพื่อใช้เป็นข้อมูลในการจัดเตรียมสถานที่ อาหาร และห้องพักให้เหมาะสม',
+      regStatus: 'OPEN',
+      deadline: ''
     };
     let realtimeChannel = null;
     let currentAdminPage = 1;
@@ -1303,7 +1323,9 @@
         if (!error && data) {
           data.forEach(row => {
             if (row.config_key === 'system_name') systemConfig.systemName = row.config_value;
+            if (row.config_key === 'system_desc') systemConfig.systemDesc = row.config_value;
             if (row.config_key === 'reg_status') systemConfig.regStatus = row.config_value;
+            if (row.config_key === 'reg_deadline') systemConfig.deadline = row.config_value;
           });
           applySystemConfig();
         }
@@ -1312,24 +1334,44 @@
       }
     }
 
+    function isRegistrationOpenByConfig() {
+      if (systemConfig.regStatus === 'CLOSED') return false;
+      if (systemConfig.deadline) {
+        const deadlineTime = new Date(systemConfig.deadline).getTime();
+        if (!isNaN(deadlineTime) && Date.now() > deadlineTime) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     function applySystemConfig() {
       const title = systemConfig.systemName || 'งานเลี้ยงสังสรรค์กำลังพลและครอบครัว ประจำปี 2569';
-      const isOpen = systemConfig.regStatus !== 'CLOSED';
+      const desc = systemConfig.systemDesc || 'ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน เพื่อใช้เป็นข้อมูลในการจัดเตรียมสถานที่ อาหาร และห้องพักให้เหมาะสม';
+      const isOpen = isRegistrationOpenByConfig();
 
       const landingTitleEl = document.getElementById('landingSystemTitle');
+      const landingDescEl = document.getElementById('landingSystemDesc');
       const surveyTitleEl = document.getElementById('surveySystemTitle');
       const settingNameEl = document.getElementById('settingSystemName');
+      const settingDescEl = document.getElementById('settingSystemDesc');
       const settingStatusEl = document.getElementById('settingRegistrationStatus');
+      const settingDeadlineEl = document.getElementById('settingDeadline');
 
       if (landingTitleEl) landingTitleEl.innerText = title;
+      if (landingDescEl) landingDescEl.innerText = desc;
       if (surveyTitleEl) surveyTitleEl.innerText = title;
       if (settingNameEl) settingNameEl.value = title;
-      if (settingStatusEl) settingStatusEl.value = isOpen ? 'OPEN' : 'CLOSED';
+      if (settingDescEl) settingDescEl.value = desc;
+      if (settingStatusEl) settingStatusEl.value = systemConfig.regStatus === 'CLOSED' ? 'CLOSED' : 'OPEN';
+      if (settingDeadlineEl) settingDeadlineEl.value = systemConfig.deadline || '';
 
       const badge = document.getElementById('landingHeroStatusBadge');
       const dot = document.getElementById('landingHeroStatusDot');
       const text = document.getElementById('landingHeroStatusText');
       const banner = document.getElementById('systemStatusBanner');
+      const bannerTitle = document.getElementById('systemStatusBannerTitle');
+      const bannerDesc = document.getElementById('systemStatusBannerDesc');
       const btnReg = document.getElementById('btnStartRegister');
 
       if (isOpen) {
@@ -1342,9 +1384,12 @@
           btnReg.classList.remove('opacity-50', 'cursor-not-allowed');
         }
       } else {
+        const isExpiredByTime = systemConfig.regStatus !== 'CLOSED' && systemConfig.deadline && !isNaN(new Date(systemConfig.deadline).getTime()) && Date.now() > new Date(systemConfig.deadline).getTime();
         if (badge) badge.className = 'mt-3.5 inline-flex items-center gap-2 bg-red-500/20 backdrop-blur-sm border border-red-300/40 text-red-200 text-xs font-medium px-3.5 py-1 rounded-full shadow-sm transition-all';
         if (dot) dot.className = 'w-2 h-2 rounded-full bg-red-400';
-        if (text) text.innerText = 'ปิดรับการลงทะเบียนชั่วคราว';
+        if (text) text.innerText = isExpiredByTime ? 'หมดเขตการลงทะเบียนแล้ว' : 'ปิดรับการลงทะเบียนชั่วคราว';
+        if (bannerTitle) bannerTitle.innerText = isExpiredByTime ? 'พ้นกำหนดเวลาปิดรับการลงทะเบียนแล้ว' : 'ขณะนี้ระบบปิดรับการลงทะเบียน';
+        if (bannerDesc) bannerDesc.innerText = isExpiredByTime ? `ปิดรับเมื่อ ${formatThaiDateTime(systemConfig.deadline)}` : 'กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ';
         if (banner) banner.classList.remove('hidden');
         if (btnReg) {
           btnReg.disabled = true;
@@ -1368,11 +1413,11 @@
 
     function goToSurveyForm() {
       if (!ensureSupabaseReady()) return;
-      if (systemConfig.regStatus === 'CLOSED') {
+      if (!isRegistrationOpenByConfig()) {
         Swal.fire({
           icon: 'warning',
           title: 'ปิดรับการลงทะเบียน',
-          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนชั่วคราว กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ',
+          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนหรือพ้นกำหนดเวลาแล้ว กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ',
           confirmButtonColor: '#1e3a8a'
         });
         return;
@@ -1456,11 +1501,11 @@
       e.preventDefault();
       if (!ensureSupabaseReady()) return;
 
-      if (systemConfig.regStatus === 'CLOSED') {
+      if (!isRegistrationOpenByConfig()) {
         Swal.fire({
           icon: 'warning',
           title: 'ปิดรับการลงทะเบียน',
-          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนชั่วคราว',
+          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนหรือพ้นกำหนดเวลาแล้ว',
           confirmButtonColor: '#1e3a8a'
         });
         return;
@@ -1990,7 +2035,9 @@
       if (!ensureSupabaseReady()) return;
 
       const newName = document.getElementById('settingSystemName').value.trim();
+      const newDesc = document.getElementById('settingSystemDesc').value.trim();
       const newStatus = document.getElementById('settingRegistrationStatus').value;
+      const newDeadline = document.getElementById('settingDeadline').value || '';
 
       Swal.fire({ title: 'กำลังบันทึกการตั้งค่า...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       try {
@@ -1998,13 +2045,17 @@
           .from('system_settings')
           .upsert([
             { config_key: 'system_name', config_value: newName },
-            { config_key: 'reg_status', config_value: newStatus }
+            { config_key: 'system_desc', config_value: newDesc },
+            { config_key: 'reg_status', config_value: newStatus },
+            { config_key: 'reg_deadline', config_value: newDeadline }
           ], { onConflict: 'config_key' });
 
         if (error) throw error;
 
         systemConfig.systemName = newName;
+        systemConfig.systemDesc = newDesc;
         systemConfig.regStatus = newStatus;
+        systemConfig.deadline = newDeadline;
         applySystemConfig();
 
         Swal.fire({ icon: 'success', title: 'บันทึกการตั้งค่าเรียบร้อยแล้ว', timer: 1300, showConfirmButton: false });
