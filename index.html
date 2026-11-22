@@ -343,6 +343,7 @@
           <p class="text-[11px] sm:text-xs text-blue-200 flex items-center gap-1.5 mt-0.5">
             <span id="realtimeStatusDot" class="w-2 h-2 shrink-0 rounded-full bg-emerald-400 animate-pulse"></span>
             <span id="realtimeStatusText" class="truncate">เชื่อมต่อ Supabase Real-time ทันที</span>
+            <span id="adminUserEmailBadge" class="hidden sm:inline-block bg-white/10 text-amber-200 px-2 py-0.5 rounded-md text-[10px] ml-1"></span>
           </p>
         </div>
       </div>
@@ -362,7 +363,7 @@
     </div>
 
     <!-- แถบสลับเมนูหลักของเจ้าหน้าที่ -->
-    <div class="bg-white p-1.5 sm:p-2 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:flex gap-1.5 sm:gap-2">
+    <div class="bg-white p-1.5 sm:p-2 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:flex flex-wrap gap-1.5 sm:gap-2">
       <button type="button" id="tabBtnSurvey" onclick="switchAdminMainTab('survey')"
         class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-blue-900 text-white shadow-sm">
         <i class="fas fa-clipboard-list"></i>
@@ -372,6 +373,11 @@
         class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
         <i class="fas fa-hotel"></i>
         <span>จัดการที่พัก & แผนผังห้องพัก</span>
+      </button>
+      <button type="button" id="tabBtnWelfare" onclick="switchAdminMainTab('welfare')"
+        class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        <i class="fas fa-id-card"></i>
+        <span>สมาชิกสวัสดิการกองร้อย</span>
       </button>
       <button type="button" id="tabBtnSummary" onclick="switchAdminMainTab('summary')"
         class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
@@ -461,7 +467,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-purple-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็กโต (5 - 12 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็ก (5 - 12 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-purple-700 mt-0.5" id="statChildren">0</div>
                 <div class="text-[10px] text-slate-400">คน</div>
               </div>
@@ -472,7 +478,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-pink-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็กเล็ก/แรกเกิด (&lt; 5 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-pink-600 mt-0.5" id="statInfants">0</div>
                 <div class="text-[10px] text-slate-400">คน (รวมเด็กแรกเกิด)</div>
               </div>
@@ -566,8 +572,8 @@
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะ</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ผู้ใหญ่ (≥13 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กโต (5-12 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กเล็ก/แรกเกิด (&lt;5 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็ก (5-12 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ทารก (&lt;5 ปี)</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">รายละเอียดบุตร</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ที่พัก</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">หมายเหตุ/เหตุผล</th>
@@ -772,7 +778,7 @@
                   <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ชั้น</th>
                   <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ประเภทเตียง</th>
                   <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">รูปแบบเข้าพัก</th>
-                  <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">รองรับ (คน)</th>
+                  <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ความจุ / เข้าพักจริง</th>
                   <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะ</th>
                   <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ผู้เข้าพักปัจจุบัน</th>
                   <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">จัดการ</th>
@@ -785,6 +791,108 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- แท็บย่อยใหม่: หน้าจัดการสมาชิกสวัสดิการกองร้อย (Welfare Members) -->
+    <!-- =================================================================== -->
+    <div id="adminWelfareSection" class="hidden space-y-4 fade-in">
+      <!-- การ์ดสรุปยอดสมาชิกสวัสดิการกองร้อย -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
+        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-slate-100 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-medium text-slate-500">สมาชิกสวัสดิการทั้งหมด</span>
+            <div class="text-xl sm:text-2xl font-bold text-slate-800 mt-0.5" id="welfareStatTotal">0</div>
+            <div class="text-[10px] text-slate-400">นาย</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-base shrink-0">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-emerald-100 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-medium text-emerald-700">สถานะปกติ (รับราชการในหน่วย)</span>
+            <div class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="welfareStatActive">0</div>
+            <div class="text-[10px] text-emerald-600/70">นาย</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0">
+            <i class="fas fa-user-check"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-indigo-100 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-medium text-indigo-700">ลงทะเบียนร่วมงานแล้ว</span>
+            <div class="text-xl sm:text-2xl font-bold text-indigo-700 mt-0.5" id="welfareStatRegistered">0</div>
+            <div class="text-[10px] text-indigo-500">นาย (จากรายชื่อสมาชิก)</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base shrink-0">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- ตารางจัดการสมาชิกสวัสดิการกองร้อย -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50/50">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="font-bold text-sm sm:text-base text-slate-800 flex items-center gap-2">
+              <i class="fas fa-id-card text-blue-800"></i>
+              <span>ทะเบียนสมาชิกสวัสดิการกองร้อย</span>
+            </h3>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="exportWelfareCSV()"
+                class="bg-blue-800 hover:bg-blue-900 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-xl shadow transition-all flex items-center gap-1.5 shrink-0">
+                <i class="fas fa-file-excel"></i>
+                <span>ส่งออก CSV</span>
+              </button>
+              <button type="button" onclick="openWelfareModal('add')"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-xl shadow transition-all flex items-center gap-1.5 shrink-0">
+                <i class="fas fa-user-plus"></i>
+                <span>เพิ่มสมาชิก</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2 w-full lg:w-auto">
+            <select id="filterWelfareStatus" onchange="renderWelfareTable()"
+              class="w-full lg:w-44 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:outline-none">
+              <option value="ALL">สถานะ: ทั้งหมด</option>
+              <option value="ปกติ">เฉพาะ: ปกติ</option>
+              <option value="ย้าย/พ้นสภาพ">เฉพาะ: ย้าย/พ้นสภาพ</option>
+            </select>
+
+            <div class="relative w-full lg:w-64">
+              <input type="text" id="searchWelfareInput" oninput="renderWelfareTable()" placeholder="ค้นหา ยศ, ชื่อ, นามสกุล, ตำแหน่ง..."
+                class="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:outline-none">
+              <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs sm:text-sm"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto w-full table-scroll-container">
+          <table class="w-full min-w-[860px] text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 text-[11px] sm:text-xs uppercase tracking-wider border-b border-slate-200">
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ลำดับ</th>
+                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
+                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ตำแหน่ง / หมวด</th>
+                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">เบอร์โทรศัพท์</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะสมาชิก</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะลงทะเบียนงาน</th>
+                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">หมายเหตุ</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="welfareTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700">
+              <tr>
+                <td colspan="8" class="p-8 text-center text-slate-400">ยังไม่มีข้อมูลสมาชิกสวัสดิการกองร้อย</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -895,11 +1003,11 @@
               <span class="font-bold text-indigo-800"><span id="sumAdults">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็กโต (5 - 12 ปี)</span>
+              <span class="text-slate-600">เด็ก (5 - 12 ปี)</span>
               <span class="font-bold text-purple-700"><span id="sumChildren">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็กเล็ก/แรกเกิด (&lt; 5 ปี)</span>
+              <span class="text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
               <span class="font-bold text-pink-600"><span id="sumInfants">0</span> คน</span>
             </div>
             <div class="flex justify-between pt-2 border-t border-slate-100 font-bold text-blue-950">
@@ -1072,90 +1180,84 @@
 
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
           <button type="button" onclick="closeFormModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-sm font-medium shadow">บันทึกข้อมูล</button>
+          <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeRoomModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white text-sm font-medium shadow">บันทึกห้องพัก</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 4: Modal เพิ่ม/แก้ไขห้องพักโรงแรม (Room Management Modal) -->
+  <!-- ส่วนที่ 5: Modal เพิ่ม/แก้ไขสมาชิกสวัสดิการกองร้อย (Welfare Member Modal) -->
   <!-- ===================================================================== -->
-  <div id="roomFormModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div id="welfareFormModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto fade-in">
-      <div class="bg-gradient-to-r from-indigo-900 to-blue-900 px-5 py-4 text-white flex items-center justify-between">
-        <h3 id="roomModalTitle" class="font-bold text-base">จัดการห้องพัก</h3>
-        <button type="button" onclick="closeRoomModal()" class="text-white/80 hover:text-white text-xl">
+      <div class="bg-gradient-to-r from-blue-950 to-indigo-900 px-5 py-4 text-white flex items-center justify-between">
+        <h3 id="welfareModalTitle" class="font-bold text-base">เพิ่มสมาชิกสวัสดิการกองร้อย</h3>
+        <button type="button" onclick="closeWelfareModal()" class="text-white/80 hover:text-white text-xl">
           <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <form id="roomEditForm" class="p-5 space-y-4">
-        <input type="hidden" id="editRoomId">
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label for="modalRoomName" class="block text-xs font-medium text-slate-700 mb-1">ชื่อห้อง / หมายเลขห้อง *</label>
-            <input type="text" id="modalRoomName" required placeholder="เช่น 201, VIP-1" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-          <div>
-            <label for="modalRoomFloor" class="block text-xs font-medium text-slate-700 mb-1">ชั้น *</label>
-            <input type="text" id="modalRoomFloor" required placeholder="เช่น 1, 2, 3" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-        </div>
+      <form id="welfareEditForm" class="p-5 space-y-4">
+        <input type="hidden" id="editWelfareId">
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label for="modalRoomBedType" class="block text-xs font-medium text-slate-700 mb-1">ประเภทเตียง</label>
-            <select id="modalRoomBedType" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-              <option value="เตียงเดี่ยว">เตียงเดี่ยว</option>
-              <option value="เตียงคู่">เตียงคู่</option>
-              <option value="2 เตียงเดี่ยว">2 เตียงเดี่ยว</option>
-              <option value="ห้องครอบครัว">ห้องครอบครัว</option>
+            <label for="modalWelfareRank" class="block text-xs font-medium text-slate-700 mb-1">ยศ *</label>
+            <select id="modalWelfareRank" required class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+              <option value="ส.ต.">ส.ต.</option>
+              <option value="ส.ท.">ส.ท.</option>
+              <option value="ส.อ.">ส.อ.</option>
+              <option value="จ.ส.ต.">จ.ส.ต.</option>
+              <option value="จ.ส.ท.">จ.ส.ท.</option>
+              <option value="จ.ส.อ.">จ.ส.อ.</option>
+              <option value="ร.ต.">ร.ต.</option>
+              <option value="ร.ท.">ร.ท.</option>
+              <option value="ร.อ.">ร.อ.</option>
+              <option value="พ.ต.">พ.ต.</option>
+              <option value="พ.ท.">พ.ท.</option>
             </select>
           </div>
           <div>
-            <label for="modalRoomStayType" class="block text-xs font-medium text-slate-700 mb-1">รูปแบบเข้าพัก</label>
-            <select id="modalRoomStayType" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-              <option value="คนเดียว">คนเดียว</option>
-              <option value="ครอบครัว">ครอบครัว</option>
+            <label for="modalWelfareFirstName" class="block text-xs font-medium text-slate-700 mb-1">ชื่อ *</label>
+            <input type="text" id="modalWelfareFirstName" required placeholder="ระบุชื่อ" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label for="modalWelfareLastName" class="block text-xs font-medium text-slate-700 mb-1">นามสกุล *</label>
+            <input type="text" id="modalWelfareLastName" required placeholder="ระบุนามสกุล" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="modalWelfarePosition" class="block text-xs font-medium text-slate-700 mb-1">ตำแหน่ง / หมวด</label>
+            <input type="text" id="modalWelfarePosition" placeholder="เช่น ผบ.หมู่, เสมียนกองร้อย..." class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label for="modalWelfarePhone" class="block text-xs font-medium text-slate-700 mb-1">เบอร์โทรศัพท์</label>
+            <input type="text" id="modalWelfarePhone" placeholder="เช่น 08x-xxx-xxxx" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="modalWelfareStatus" class="block text-xs font-medium text-slate-700 mb-1">สถานะสมาชิก *</label>
+            <select id="modalWelfareStatus" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+              <option value="ปกติ">ปกติ</option>
+              <option value="ย้าย/พ้นสภาพ">ย้าย/พ้นสภาพ</option>
             </select>
           </div>
           <div>
-            <label for="modalRoomCapacity" class="block text-xs font-medium text-slate-700 mb-1">รองรับ (คน)</label>
-            <input type="number" id="modalRoomCapacity" min="1" max="10" value="2" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
+            <label for="modalWelfareNote" class="block text-xs font-medium text-slate-700 mb-1">หมายเหตุ</label>
+            <input type="text" id="modalWelfareNote" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
           </div>
-        </div>
-
-        <div>
-          <label for="modalRoomStatus" class="block text-xs font-medium text-slate-700 mb-1">สถานะห้องพัก</label>
-          <select id="modalRoomStatus" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-            <option value="ว่าง">ว่าง</option>
-            <option value="เต็ม">เต็ม</option>
-          </select>
-        </div>
-
-        <div class="space-y-2 bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100">
-          <label for="selectGuestForRoom" class="block text-xs font-medium text-indigo-900">เลือกผู้ลงทะเบียนที่ขอที่พักเพื่อเพิ่มเข้าห้องนี้</label>
-          <div class="flex gap-2">
-            <select id="selectGuestForRoom" class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm">
-              <option value="">-- เลือกรายชื่อ --</option>
-            </select>
-            <button type="button" onclick="appendGuestToRoomInput()" class="px-3.5 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-medium shrink-0">
-              + เพิ่มชื่อ
-            </button>
-            <button type="button" onclick="clearRoomOccupantsInput()" class="px-3 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 text-xs font-medium shrink-0" title="ล้างรายชื่อผู้เข้าพักทั้งหมดในห้องนี้">
-              ล้างห้อง
-            </button>
-          </div>
-
-          <label for="modalRoomOccupants" class="block text-xs font-medium text-slate-700 pt-1">รายชื่อผู้เข้าพักในห้องนี้ (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
-          <textarea id="modalRoomOccupants" rows="2" oninput="syncRoomStatusFromOccupants()" placeholder="ระบุยศ ชื่อ-นามสกุล ผู้เข้าพัก..." class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"></textarea>
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" onclick="closeRoomModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-900 hover:bg-indigo-950 text-white text-sm font-medium shadow">บันทึกห้องพัก</button>
+          <button type="button" onclick="closeWelfareModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-sm font-medium shadow">บันทึกข้อมูลสมาชิก</button>
         </div>
       </form>
     </div>
@@ -1203,10 +1305,11 @@
     // ตัวแปรส่วนกลาง
     let allRecords = [];
     let allRooms = [];
+    let allWelfareMembers = [];
+    let currentAdminUser = null;
     let systemConfig = {
       systemName: 'แบบสำรวจสมาชิกยืนยันยอดร่วมงานเลี้ยงสังสรรค์ ประจำปี 2569',
-      regStatus: 'OPEN',
-      adminPassword: 'admin1234'
+      regStatus: 'OPEN'
     };
     let realtimeChannel = null;
     let currentAdminPage = 1;
@@ -1236,6 +1339,12 @@
         return;
       }
       await fetchSystemConfig();
+
+      // ตรวจสอบ Session ของ Supabase Auth หากเจ้าหน้าที่ล็อกอินค้างไว้
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      if (sessionData && sessionData.session && sessionData.session.user) {
+        currentAdminUser = sessionData.session.user;
+      }
     });
 
     async function fetchSystemConfig() {
@@ -1249,7 +1358,6 @@
           data.forEach(row => {
             if (row.config_key === 'system_name') systemConfig.systemName = row.config_value;
             if (row.config_key === 'reg_status') systemConfig.regStatus = row.config_value;
-            if (row.config_key === 'admin_password') systemConfig.adminPassword = row.config_value;
           });
           applySystemConfig();
         }
@@ -1396,279 +1504,105 @@
     }
 
     // =========================================================================
-    // บันทึกข้อมูลแบบสำรวจลง Supabase + ตรวจสอบรายชื่อซ้ำ
+    // ส่วนที่ 2: ระบบเข้าสู่ระบบเจ้าหน้าที่ด้วย Supabase Auth & จัดการข้อมูลหลังบ้าน
     // =========================================================================
-    document.getElementById('surveyForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      submitSurveyData(false);
-    });
+    async function enterAdminDashboard(user) {
+      currentAdminUser = user;
+      const emailBadge = document.getElementById('adminUserEmailBadge');
+      if (emailBadge && user && user.email) {
+        emailBadge.innerText = user.email;
+        emailBadge.classList.remove('hidden');
+      }
+      document.getElementById('landingView').classList.add('hidden');
+      document.getElementById('publicView').classList.add('hidden');
+      document.getElementById('adminView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await loadAdminData(false);
+      subscribeToRealtimeChanges();
+    }
 
-    async function submitSurveyData(forceUpdate = false, existingId = null) {
+    async function openAdminLogin() {
       if (!ensureSupabaseReady()) return;
 
-      const statusRadio = document.querySelector('input[name="attendanceStatus"]:checked');
-      if (!statusRadio) {
-        Swal.fire({ icon: 'warning', title: 'กรุณาเลือกสถานะการร่วมงาน' });
+      // หากมี Session ที่ยังใช้งานได้อยู่ให้เข้าสู่หน้าแดชบอร์ดทันที
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      if (sessionData && sessionData.session && sessionData.session.user) {
+        await enterAdminDashboard(sessionData.session.user);
         return;
       }
 
-      const status = statusRadio.value;
-      const childCount = status === 'ร่วมงาน' ? (parseInt(document.getElementById('childCount').value) || 0) : 0;
-      let childAgesList = [];
-
-      if (status === 'ร่วมงาน' && childCount > 0) {
-        for (let i = 1; i <= childCount; i++) {
-          const val = document.getElementById(`childAgeVal_${i}`).value;
-          const unit = document.getElementById(`childAgeUnit_${i}`).value;
-          childAgesList.push(`อายุ ${val} ${unit}`);
-        }
-      }
-
-      const accRadio = document.querySelector('input[name="accommodation"]:checked');
-      const rank = document.getElementById('rank').value.trim();
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-
-      const payload = {
-        created_at: new Date().toISOString(),
-        rank: rank,
-        first_name: firstName,
-        last_name: lastName,
-        attendance_status: status,
-        decline_reason: status === 'สละสิทธิ์' ? (document.getElementById('declineReason').value.trim() || '-') : '-',
-        adult_count: status === 'ร่วมงาน' ? Number(document.getElementById('adultCount').value) : 0,
-        child_count: childCount,
-        child_ages: (status === 'ร่วมงาน' && childCount > 0) ? childAgesList.join(', ') : '-',
-        accommodation: status === 'ร่วมงาน' ? (accRadio ? accRadio.value : 'ไม่ต้องการ') : '-'
-      };
-
       Swal.fire({
-        title: forceUpdate ? 'กำลังอัปเดตข้อมูลเดิม...' : 'กำลังบันทึกข้อมูล...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      try {
-        if (!forceUpdate) {
-          const { data: duplicates, error: dupErr } = await supabaseClient
-            .from('registrations')
-            .select('*')
-            .eq('rank', rank)
-            .eq('first_name', firstName)
-            .eq('last_name', lastName)
-            .limit(1);
-
-          if (dupErr) throw dupErr;
-
-          if (duplicates && duplicates.length > 0) {
-            const ex = duplicates[0];
-            const fullName = `${rank}${firstName} ${lastName}`;
-            Swal.fire({
-              icon: 'warning',
-              title: 'พบรายชื่อลงทะเบียนในระบบแล้ว!',
-              html: `
-                <div class="text-left text-xs sm:text-sm bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-1.5 text-slate-700">
-                  <p class="font-bold text-amber-900">ข้อมูลเดิมของ ${fullName}</p>
-                  <p>• บันทึกเมื่อ: <b>${formatThaiDateTime(ex.created_at)}</b></p>
-                  <p>• สถานะเดิม: <b>${ex.attendance_status}</b></p>
-                  ${ex.attendance_status === 'ร่วมงาน'
-                    ? `<p>• ผู้ใหญ่: <b>${ex.adult_count}</b> คน | บุตร: <b>${ex.child_count}</b> คน | ที่พัก: <b>${ex.accommodation}</b></p>`
-                    : ''}
-                  <p class="text-red-600 pt-1 text-xs">* ระบบป้องกันการบันทึกซ้ำ หากต้องการแก้ไขข้อมูลเดิมให้กดปุ่ม "อัปเดตทับข้อมูลเดิม"</p>
-                </div>
-              `,
-              showCancelButton: true,
-              confirmButtonText: 'อัปเดตทับข้อมูลเดิม',
-              cancelButtonText: 'ยกเลิก',
-              confirmButtonColor: '#d97706'
-            }).then((confirmRes) => {
-              if (confirmRes.isConfirmed) {
-                submitSurveyData(true, ex.id);
-              }
-            });
-            return;
-          }
-        }
-
-        if (forceUpdate && existingId) {
-          payload.created_at = new Date().toISOString();
-          const { error: updErr } = await supabaseClient
-            .from('registrations')
-            .update(payload)
-            .eq('id', existingId);
-          if (updErr) throw updErr;
-        } else {
-          const { error: insErr } = await supabaseClient
-            .from('registrations')
-            .insert([payload]);
-          if (insErr) throw insErr;
-        }
-
-        Swal.fire({
-          icon: 'success',
-          title: forceUpdate ? 'อัปเดตข้อมูลเรียบร้อยแล้ว!' : 'บันทึกข้อมูลเรียบร้อยแล้ว!',
-          text: status === 'ร่วมงาน'
-            ? 'ขอบคุณที่ยืนยันข้อมูลเข้าร่วมงานเลี้ยงสังสรรค์'
-            : 'บันทึกข้อมูลการสละสิทธิ์เรียบร้อยแล้ว',
-          confirmButtonText: 'กลับสู่หน้าแรก',
-          confirmButtonColor: '#1e3a8a'
-        }).then(() => {
-          document.getElementById('surveyForm').reset();
-          document.getElementById('declineSection').classList.add('hidden');
-          document.getElementById('attendSection').classList.add('hidden');
-          document.getElementById('childAgesContainer').classList.add('hidden');
-          backToLanding();
-        });
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message || String(err) });
-      }
-    }
-
-    // =========================================================================
-    // หน้าต่างตรวจสอบสิทธิ์และห้องพักสำหรับสมาชิก (Self-Service Lookup)
-    // =========================================================================
-    function openMemberLookupModal() {
-      if (!ensureSupabaseReady()) return;
-
-      Swal.fire({
-        title: '<span class="text-lg font-bold text-blue-950"><i class="fas fa-search-location mr-2 text-blue-700"></i>ตรวจสอบสิทธิ์ / ห้องพัก</span>',
-        input: 'text',
-        inputLabel: 'กรอกชื่อ หรือ นามสกุล ของท่านเพื่อตรวจสอบข้อมูล',
-        inputPlaceholder: 'เช่น สมชาย หรือ ใจดี...',
+        title: '<span class="text-lg font-bold text-slate-800"><i class="fas fa-shield-alt mr-2 text-blue-800"></i>เข้าสู่ระบบเจ้าหน้าที่ (Supabase Auth)</span>',
+        html: `
+          <div class="text-left space-y-3 pt-1">
+            <div>
+              <label for="swalAdminEmail" class="block text-xs font-medium text-slate-700 mb-1">อีเมลเจ้าหน้าที่</label>
+              <input id="swalAdminEmail" type="email" placeholder="admin@example.com"
+                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label for="swalAdminPassword" class="block text-xs font-medium text-slate-700 mb-1">รหัสผ่าน</label>
+              <input id="swalAdminPassword" type="password" placeholder="••••••••"
+                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-slate-400">* ใช้บัญชีผู้ใช้ที่สร้างในเมนู Authentication -> Users ของ Supabase</p>
+          </div>
+        `,
         showCancelButton: true,
-        confirmButtonText: 'ค้นหาข้อมูล',
-        cancelButtonText: 'ปิด',
+        confirmButtonText: 'เข้าสู่ระบบ',
+        cancelButtonText: 'ยกเลิก',
         confirmButtonColor: '#1e3a8a',
-        preConfirm: async (keyword) => {
-          const q = (keyword || '').trim();
-          if (!q) {
-            Swal.showValidationMessage('กรุณากรอกชื่อหรือนามสกุล');
+        focusConfirm: false,
+        didOpen: () => {
+          const emailInput = document.getElementById('swalAdminEmail');
+          const passInput = document.getElementById('swalAdminPassword');
+          if (emailInput) emailInput.focus();
+          if (passInput) {
+            passInput.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') Swal.clickConfirm();
+            });
+          }
+        },
+        preConfirm: async () => {
+          const email = (document.getElementById('swalAdminEmail').value || '').trim();
+          const password = (document.getElementById('swalAdminPassword').value || '').trim();
+          if (!email || !password) {
+            Swal.showValidationMessage('กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน!');
             return false;
           }
           try {
-            const [regRes, roomRes] = await Promise.all([
-              supabaseClient
-                .from('registrations')
-                .select('*')
-                .or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,rank.ilike.%${q}%`)
-                .order('id', { ascending: true }),
-              supabaseClient
-                .from('rooms')
-                .select('*')
-            ]);
-
-            if (regRes.error) throw regRes.error;
-            if (roomRes.error) throw roomRes.error;
-
-            return {
-              matches: regRes.data || [],
-              rooms: roomRes.data || []
-            };
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+            if (error) {
+              Swal.showValidationMessage('เข้าสู่ระบบไม่สำเร็จ: ' + (error.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'));
+              return false;
+            }
+            return data.user;
           } catch (err) {
             Swal.showValidationMessage('เกิดข้อผิดพลาด: ' + (err.message || String(err)));
             return false;
           }
         }
-      }).then((result) => {
-        if (!result.isConfirmed || !result.value) return;
-        const { matches, rooms } = result.value;
-
-        if (matches.length === 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'ไม่พบข้อมูลการลงทะเบียน',
-            text: 'ไม่พบรายชื่อที่ค้นหาในระบบ ท่านสามารถกดปุ่ม "ลงทะเบียนร่วมงาน" บนหน้าแรกได้เลยครับ',
-            confirmButtonColor: '#1e3a8a'
-          });
-          return;
-        }
-
-        const cardsHtml = matches.map(raw => {
-          const m = mapRegistrationRow(raw);
-          const isAttend = m.attendanceStatus === 'ร่วมงาน';
-          const counts = calculateRecordAgeGroups(m);
-          const totalPeople = counts.adults + counts.children + counts.infants;
-          const assignedRoom = isAttend ? findAssignedRoomForGuest(m, rooms.map(mapRoomRow)) : null;
-
-          let roomBadge = '';
-          if (!isAttend) {
-            roomBadge = `<span class="text-slate-500">ไม่เข้าร่วมงาน (${m.declineReason})</span>`;
-          } else if (m.accommodation !== 'ต้องการ') {
-            roomBadge = `<span class="text-slate-600 font-medium">ไม่ขอรับการจัดสรรที่พัก</span>`;
-          } else if (assignedRoom) {
-            roomBadge = `
-              <div class="mt-1.5 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
-                <div class="font-bold"><i class="fas fa-door-open mr-1 text-emerald-700"></i>ห้องพักหมายเลข: ${assignedRoom.roomName} (ชั้น ${assignedRoom.floor})</div>
-                <div class="text-xs text-emerald-700 mt-0.5">รูปแบบ: ${assignedRoom.bedType} • ${assignedRoom.stayType}</div>
-              </div>`;
-          } else {
-            roomBadge = `<span class="inline-block mt-1 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i>ขอที่พักแล้ว (อยู่ระหว่างเจ้าหน้าที่จัดห้อง)</span>`;
-          }
-
-          return `
-            <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <span class="font-bold text-slate-900">${m.rank}${m.firstName} ${m.lastName}</span>
-                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${isAttend ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-                  ${m.attendanceStatus}
-                </span>
-              </div>
-              ${isAttend ? `<p class="text-xs text-slate-600">ยอดร่วมงาน: ผู้ใหญ่ ${m.adultCount} คน${m.childCount > 0 ? ` • บุตร ${m.childCount} คน (${m.childAges})` : ''} (รวม ${totalPeople} คน)</p>` : ''}
-              <div class="text-xs pt-1 border-t border-slate-200/70">
-                <span class="font-semibold text-slate-700">สถานะที่พัก: </span>${roomBadge}
-              </div>
-              <p class="text-[11px] text-slate-400">อัปเดตเมื่อ: ${m.timestamp}</p>
-            </div>
-          `;
-        }).join('');
-
-        Swal.fire({
-          title: '<span class="text-base font-bold text-blue-950">ผลการตรวจสอบข้อมูล</span>',
-          html: `<div class="text-left space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">${cardsHtml}</div>`,
-          confirmButtonText: 'ปิดหน้าต่าง',
-          confirmButtonColor: '#1e3a8a'
-        });
-      });
-    }
-
-    // =========================================================================
-    // ส่วนที่ 2: ระบบเข้าสู่ระบบเจ้าหน้าที่ & จัดการข้อมูลหลังบ้าน (Admin)
-    // =========================================================================
-    function openAdminLogin() {
-      if (!ensureSupabaseReady()) return;
-
-      Swal.fire({
-        title: '<span class="text-lg font-bold text-slate-800"><i class="fas fa-lock mr-2 text-blue-800"></i>เข้าสู่ระบบเจ้าหน้าที่</span>',
-        input: 'password',
-        inputLabel: 'กรุณากรอกรหัสผ่านเจ้าหน้าที่',
-        inputPlaceholder: 'รหัสผ่าน...',
-        showCancelButton: true,
-        confirmButtonText: 'เข้าสู่ระบบ',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#1e3a8a',
-        inputValidator: (value) => {
-          if (!value) return 'กรุณากรอกรหัสผ่าน!';
-          if (value.trim() !== systemConfig.adminPassword) {
-            return 'รหัสผ่านไม่ถูกต้อง!';
-          }
-        }
       }).then(async (result) => {
-        if (result.isConfirmed) {
-          document.getElementById('landingView').classList.add('hidden');
-          document.getElementById('publicView').classList.add('hidden');
-          document.getElementById('adminView').classList.remove('hidden');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          await loadAdminData(false);
-          subscribeToRealtimeChanges();
+        if (result.isConfirmed && result.value) {
+          await enterAdminDashboard(result.value);
         }
       });
     }
 
-    function logoutAdmin() {
+    async function logoutAdmin() {
       if (realtimeChannel && supabaseClient) {
         supabaseClient.removeChannel(realtimeChannel);
         realtimeChannel = null;
       }
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+      }
+      currentAdminUser = null;
+      const emailBadge = document.getElementById('adminUserEmailBadge');
+      if (emailBadge) emailBadge.classList.add('hidden');
       backToLanding();
     }
 
@@ -1681,6 +1615,9 @@
           loadAdminData(false);
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
+          loadAdminData(false);
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'welfare_members' }, () => {
           loadAdminData(false);
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, () => {
@@ -1725,6 +1662,20 @@
       };
     }
 
+    function mapWelfareRow(row) {
+      return {
+        id: row.id,
+        timestamp: formatThaiDateTime(row.created_at),
+        rank: row.rank || '',
+        firstName: row.first_name || '',
+        lastName: row.last_name || '',
+        position: row.position || '-',
+        phone: row.phone || '-',
+        memberStatus: row.member_status || 'ปกติ',
+        note: row.note || '-'
+      };
+    }
+
     // ฟังก์ชันช่วยแยกรายชื่อผู้เข้าพักในห้อง (รองรับคั่นด้วย , หรือขึ้นบรรทัดใหม่)
     function parseRoomOccupants(occupantsStr) {
       if (!occupantsStr) return [];
@@ -1732,6 +1683,30 @@
         .split(/[\n,]+/)
         .map(s => s.trim())
         .filter(Boolean);
+    }
+
+    // คำนวณจำนวนคนจริงในห้องพักจากรายชื่อผู้เข้าพักทั้งหมด (รวมผู้ใหญ่ + บุตรของแต่ละรายชื่อ)
+    function calculateRoomOccupiedPeopleCount(occupantsList) {
+      let totalPeople = 0;
+      occupantsList.forEach(occName => {
+        const normOcc = occName.replace(/\s+/g, ' ').trim();
+        const compactOcc = occName.replace(/\s+/g, '').trim();
+        const matchedReg = allRecords.find(r => {
+          if (r.attendanceStatus !== 'ร่วมงาน') return false;
+          const full = `${r.rank}${r.firstName} ${r.lastName}`.replace(/\s+/g, ' ').trim();
+          const compact = `${r.rank}${r.firstName}${r.lastName}`.replace(/\s+/g, '').trim();
+          return normOcc === full || compactOcc === compact || normOcc.includes(full);
+        });
+
+        if (matchedReg) {
+          const g = calculateRecordAgeGroups(matchedReg);
+          totalPeople += (g.adults + g.children + g.infants);
+        } else {
+          // หากเป็นรายชื่อที่พิมพ์เพิ่มเองโดยไม่มีในทะเบียน นับเป็น 1 คน
+          totalPeople += 1;
+        }
+      });
+      return totalPeople;
     }
 
     // ฟังก์ชันค้นหาห้องพักของสมาชิกแบบแม่นยำ (ตรวจทั้ง ยศ+ชื่อ+นามสกุล)
@@ -1755,20 +1730,24 @@
       if (icon) icon.classList.add('fa-spin');
 
       try {
-        const [regRes, roomRes] = await Promise.all([
+        const [regRes, roomRes, welfareRes] = await Promise.all([
           supabaseClient.from('registrations').select('*').order('id', { ascending: false }),
-          supabaseClient.from('rooms').select('*').order('floor', { ascending: true }).order('room_name', { ascending: true })
+          supabaseClient.from('rooms').select('*').order('floor', { ascending: true }).order('room_name', { ascending: true }),
+          supabaseClient.from('welfare_members').select('*').order('id', { ascending: true })
         ]);
 
         if (regRes.error) throw regRes.error;
         if (roomRes.error) throw roomRes.error;
+        if (welfareRes.error) throw welfareRes.error;
 
         allRecords = (regRes.data || []).map(mapRegistrationRow);
         allRooms = (roomRes.data || []).map(mapRoomRow);
+        allWelfareMembers = (welfareRes.data || []).map(mapWelfareRow);
 
         updateDashboardStats();
         renderAdminTable();
         renderAllRoomViews();
+        renderWelfareViews();
         renderSummaryReport();
 
         if (showToast) {
@@ -1788,7 +1767,7 @@
 
     // สลับแท็บหลักในหน้าเจ้าหน้าที่
     function switchAdminMainTab(tab) {
-      const tabs = ['survey', 'rooms', 'summary', 'settings'];
+      const tabs = ['survey', 'rooms', 'welfare', 'summary', 'settings'];
       tabs.forEach(t => {
         const sec = document.getElementById(`admin${t.charAt(0).toUpperCase() + t.slice(1)}Section`);
         const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -1801,6 +1780,7 @@
       });
 
       if (tab === 'rooms') renderAllRoomViews();
+      if (tab === 'welfare') renderWelfareViews();
       if (tab === 'summary') renderSummaryReport();
     }
 
@@ -2149,8 +2129,8 @@
         'นามสกุล',
         'สถานะการร่วมงาน',
         'ผู้ใหญ่ (>=13 ปี)',
-        'เด็กโต (5-12 ปี)',
-        'เด็กเล็ก/แรกเกิด (<5 ปี)',
+        'เด็ก (5-12 ปี)',
+        'ทารก (<5 ปี)',
         'รวมผู้ร่วมงาน (คน)',
         'รายละเอียดบุตร',
         'ความต้องการที่พัก',
@@ -2360,8 +2340,8 @@
         `--------------------------------`,
         `👥 ยอดผู้เข้าร่วมงานรวม: ${document.getElementById('sumTotalPeople').innerText} คน`,
         `- ผู้ใหญ่ (13 ปีขึ้นไป): ${document.getElementById('sumAdults').innerText} คน`,
-        `- เด็กโต (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
-        `- เด็กเล็ก/แรกเกิด (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
+        `- เด็ก (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
+        `- ทารกแรกเกิด (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
         `--------------------------------`,
         `🏨 ความต้องการที่พัก:`,
         `- ต้องการที่พัก: ${document.getElementById('sumWantRoom').innerText} ราย (จัดห้องแล้ว ${document.getElementById('sumAssignedRoom').innerText} / รอจัด ${document.getElementById('sumUnassignedRoom').innerText})`,
@@ -2552,6 +2532,8 @@
         roomContainer.innerHTML = filteredRooms.map(r => {
           const isAvail = r.status === 'ว่าง';
           const occList = parseRoomOccupants(r.occupants);
+          const currentPeopleCount = calculateRoomOccupiedPeopleCount(occList);
+          const remainingCap = Math.max(0, r.capacity - currentPeopleCount);
           return `
             <div class="p-3.5 rounded-xl border ${isAvail ? 'border-emerald-200 bg-emerald-50/30' : 'border-red-200 bg-red-50/30'} flex items-center justify-between gap-3">
               <div>
@@ -2560,7 +2542,7 @@
                   <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">ชั้น ${r.floor}</span>
                   <span class="text-xs ${r.stayType === 'ครอบครัว' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} px-2 py-0.5 rounded-md font-medium">${r.stayType}</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-1">${r.bedType} • รองรับ ${r.capacity} คน (เข้าพักแล้ว ${occList.length} รายการ)</p>
+                <p class="text-xs text-slate-500 mt-1">${r.bedType} • เข้าพัก ${currentPeopleCount}/${r.capacity} คน (ว่างอีก ${remainingCap} ที่)</p>
                 ${occList.length > 0 ? `<p class="text-xs font-medium text-indigo-900 mt-1"><i class="fas fa-user mr-1"></i>${occList.join(', ')}</p>` : ''}
               </div>
               <div class="flex flex-col items-end gap-1.5 shrink-0">
@@ -2574,29 +2556,40 @@
     }
 
     function quickAssignGuest(fullName, groupType, totalPeople = 1) {
+      // กรองเฉพาะห้องที่ยังไม่เต็ม และมีจำนวนที่ว่างรองรับเพียงพอกับจำนวนคน (totalPeople)
       const candidateRooms = allRooms.filter(r => {
-        const occCount = parseRoomOccupants(r.occupants).length;
-        return r.status === 'ว่าง' || (r.stayType === 'คนเดียว' && occCount < r.capacity);
+        if (r.status === 'เต็ม') return false;
+        const occList = parseRoomOccupants(r.occupants);
+        const currentPeople = calculateRoomOccupiedPeopleCount(occList);
+        const remainingCapacity = r.capacity - currentPeople;
+        // หากเป็นห้องครอบครัวที่มีคนพักอยู่แล้วไม่ควรจัดครอบครัวอื่นปะปน
+        if (r.stayType === 'ครอบครัว' && occList.length > 0) return false;
+        return remainingCapacity >= totalPeople;
       });
 
       if (candidateRooms.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'ไม่มีห้องว่าง', text: 'ขณะนี้ห้องพักเต็มหมดแล้ว กรุณาเพิ่มห้องพักใหม่หรือแก้ไขห้องเดิม' });
+        Swal.fire({
+          icon: 'warning',
+          title: 'ไม่พบห้องว่างที่รองรับจำนวนคนได้',
+          html: `ไม่มีห้องพักว่างที่รองรับ <b>${totalPeople} คน</b> (${groupType}) ได้ในขณะนี้<br><span class="text-xs text-slate-500">กรุณาเพิ่มห้องพักใหม่ หรือปรับเพิ่มความจุของห้องพัก</span>`
+        });
         return;
       }
 
       const inputOptions = {};
       candidateRooms.forEach(r => {
         const occList = parseRoomOccupants(r.occupants);
-        const currentNote = occList.length > 0 ? ` | มีผู้พักแล้ว ${occList.length}/${r.capacity}` : ' | ว่าง';
-        inputOptions[r.id] = `ห้อง ${r.roomName} (ชั้น ${r.floor} | ${r.stayType} | ${r.bedType} | รองรับ ${r.capacity} คน${currentNote})`;
+        const currentPeople = calculateRoomOccupiedPeopleCount(occList);
+        const currentNote = occList.length > 0 ? ` | เข้าพักแล้ว ${currentPeople}/${r.capacity} คน` : ` | ว่าง (รองรับ ${r.capacity} คน)`;
+        inputOptions[r.id] = `ห้อง ${r.roomName} (ชั้น ${r.floor} | ${r.stayType} | ${r.bedType}${currentNote})`;
       });
 
       Swal.fire({
         title: `จัดห้องพักให้ ${fullName}`,
-        text: `ประเภท: ${groupType} (${totalPeople} คน)`,
+        text: `ประเภท: ${groupType} (จำนวน ${totalPeople} คน)`,
         input: 'select',
         inputOptions: inputOptions,
-        inputPlaceholder: '-- เลือกห้องพัก --',
+        inputPlaceholder: '-- เลือกห้องพักที่รองรับได้ --',
         showCancelButton: true,
         confirmButtonText: 'บันทึกเข้าห้องพัก',
         cancelButtonText: 'ยกเลิก',
@@ -2611,11 +2604,24 @@
           if (!room) return;
 
           const occList = parseRoomOccupants(room.occupants);
+          const currentPeople = calculateRoomOccupiedPeopleCount(occList);
+
+          // ตรวจสอบความจุอีกครั้งก่อนบันทึกจริง
+          if (!occList.includes(fullName) && (currentPeople + totalPeople > room.capacity)) {
+            Swal.fire({
+              icon: 'error',
+              title: 'จำนวนคนเกินความจุห้องพัก!',
+              text: `ห้อง ${room.roomName} รองรับได้สูงสุด ${room.capacity} คน (ปัจจุบันมี ${currentPeople} คน ไม่สามารถเพิ่มอีก ${totalPeople} คนได้)`
+            });
+            return;
+          }
+
           if (!occList.includes(fullName)) {
             occList.push(fullName);
           }
           const newOccupants = occList.join(', ');
-          const isNowFull = room.stayType === 'ครอบครัว' || occList.length >= room.capacity;
+          const updatedPeopleCount = calculateRoomOccupiedPeopleCount(occList);
+          const isNowFull = room.stayType === 'ครอบครัว' || updatedPeopleCount >= room.capacity;
 
           Swal.fire({ title: 'กำลังจัดห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
@@ -2652,7 +2658,8 @@
 
         const remaining = parseRoomOccupants(room.occupants).filter(occ => occ !== fullName);
         const newOccupants = remaining.join(', ');
-        const newStatus = remaining.length === 0 ? 'ว่าง' : (remaining.length >= room.capacity ? 'เต็ม' : 'ว่าง');
+        const remainingPeopleCount = calculateRoomOccupiedPeopleCount(remaining);
+        const newStatus = remaining.length === 0 ? 'ว่าง' : (remainingPeopleCount >= room.capacity ? 'เต็ม' : 'ว่าง');
 
         Swal.fire({ title: 'กำลังอัปเดตห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         try {
@@ -2687,6 +2694,9 @@
       }
 
       tbody.innerHTML = filtered.map(r => {
+        const occList = parseRoomOccupants(r.occupants);
+        const currentPeopleCount = calculateRoomOccupiedPeopleCount(occList);
+        const isOverCapacity = currentPeopleCount > r.capacity;
         const statusBadge = r.status === 'ว่าง'
           ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">ว่าง</span>`
           : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">เต็ม</span>`;
@@ -2695,13 +2705,17 @@
           ? `<span class="text-purple-700 font-medium">ครอบครัว</span>`
           : `<span class="text-blue-700 font-medium">คนเดียว</span>`;
 
+        const capBadge = isOverCapacity
+          ? `<span class="text-red-600 font-bold" title="จำนวนคนเกินความจุห้อง!">${currentPeopleCount} / ${r.capacity} คน ⚠️</span>`
+          : `<span class="font-semibold text-slate-700">${currentPeopleCount} / ${r.capacity} คน</span>`;
+
         return `
           <tr class="hover:bg-slate-50 transition-colors">
             <td class="p-3.5 font-bold text-slate-800">${r.roomName}</td>
             <td class="p-3.5 text-center">${r.floor}</td>
             <td class="p-3.5 text-center">${r.bedType}</td>
             <td class="p-3.5 text-center">${stayBadge}</td>
-            <td class="p-3.5 text-center font-semibold">${r.capacity} คน</td>
+            <td class="p-3.5 text-center">${capBadge}</td>
             <td class="p-3.5 text-center">${statusBadge}</td>
             <td class="p-3.5 text-xs text-slate-600 max-w-xs truncate" title="${r.occupants || '-'}">${r.occupants || '-'}</td>
             <td class="p-3.5 text-center whitespace-nowrap">
@@ -2783,10 +2797,11 @@
       const stayType = document.getElementById('modalRoomStayType').value;
       const capacity = Number(document.getElementById('modalRoomCapacity').value) || 1;
       const statusEl = document.getElementById('modalRoomStatus');
+      const totalPeople = calculateRoomOccupiedPeopleCount(occList);
 
       if (occList.length === 0) {
         statusEl.value = 'ว่าง';
-      } else if (stayType === 'ครอบครัว' || occList.length >= capacity) {
+      } else if (stayType === 'ครอบครัว' || totalPeople >= capacity) {
         statusEl.value = 'เต็ม';
       }
     }
@@ -2796,15 +2811,30 @@
       if (!ensureSupabaseReady()) return;
 
       const roomId = document.getElementById('editRoomId').value;
+      const capacity = Number(document.getElementById('modalRoomCapacity').value) || 1;
+      const occupantsRaw = document.getElementById('modalRoomOccupants').value.trim();
+      const occList = parseRoomOccupants(occupantsRaw);
+      const totalPeople = calculateRoomOccupiedPeopleCount(occList);
+
+      // ตรวจสอบเงื่อนไขจำนวนคนต่อความจุห้องพัก
+      if (totalPeople > capacity) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'จำนวนผู้เข้าพักเกินความจุของห้อง!',
+          html: `รายชื่อที่ระบุมีจำนวนสมาชิกรวม <b>${totalPeople} คน</b> ซึ่งเกินความจุของห้องพัก (<b>${capacity} คน</b>)<br><span class="text-xs text-slate-500">กรุณาปรับเพิ่มจำนวนรองรับ (คน) หรือลดรายชื่อผู้เข้าพักในห้องนี้</span>`,
+          confirmButtonColor: '#1e3a8a'
+        });
+        return;
+      }
 
       const payload = {
         room_name: document.getElementById('modalRoomName').value.trim(),
         floor: document.getElementById('modalRoomFloor').value.trim(),
         bed_type: document.getElementById('modalRoomBedType').value,
         stay_type: document.getElementById('modalRoomStayType').value,
-        capacity: Number(document.getElementById('modalRoomCapacity').value) || 1,
+        capacity: capacity,
         status: document.getElementById('modalRoomStatus').value,
-        occupants: document.getElementById('modalRoomOccupants').value.trim()
+        occupants: occupantsRaw
       };
 
       Swal.fire({ title: 'กำลังบันทึกห้องพัก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
@@ -2849,6 +2879,222 @@
           }
         }
       });
+    }
+
+    // =========================================================================
+    // ส่วนที่ 5: ระบบจัดการสมาชิกสวัสดิการกองร้อย (เพิ่ม, ลบ, แก้ไข)
+    // =========================================================================
+    function renderWelfareViews() {
+      const total = allWelfareMembers.length;
+      const activeCount = allWelfareMembers.filter(m => m.memberStatus === 'ปกติ').length;
+      const registeredCount = allWelfareMembers.filter(m => {
+        return allRecords.some(r =>
+          r.rank.trim() === m.rank.trim() &&
+          r.firstName.trim() === m.firstName.trim() &&
+          r.lastName.trim() === m.lastName.trim()
+        );
+      }).length;
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      setTxt('welfareStatTotal', total);
+      setTxt('welfareStatActive', activeCount);
+      setTxt('welfareStatRegistered', registeredCount);
+
+      renderWelfareTable();
+    }
+
+    function renderWelfareTable() {
+      const tbody = document.getElementById('welfareTableBody');
+      if (!tbody) return;
+
+      const filterStatus = document.getElementById('filterWelfareStatus').value;
+      const search = document.getElementById('searchWelfareInput').value.toLowerCase().trim();
+
+      const filtered = allWelfareMembers.filter(m => {
+        const matchStatus = filterStatus === 'ALL' || m.memberStatus === filterStatus;
+        const fullText = `${m.rank}${m.firstName} ${m.lastName} ${m.position} ${m.phone} ${m.note}`.toLowerCase();
+        const matchSearch = !search || fullText.includes(search);
+        return matchStatus && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400">ไม่พบข้อมูลสมาชิกสวัสดิการกองร้อย</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((m, idx) => {
+        const isNormal = m.memberStatus === 'ปกติ';
+        const statusBadge = isNormal
+          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">ปกติ</span>`
+          : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">${m.memberStatus}</span>`;
+
+        const regRecord = allRecords.find(r =>
+          r.rank.trim() === m.rank.trim() &&
+          r.firstName.trim() === m.firstName.trim() &&
+          r.lastName.trim() === m.lastName.trim()
+        );
+
+        let regBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">ยังไม่ลงทะเบียน</span>`;
+        if (regRecord) {
+          regBadge = regRecord.attendanceStatus === 'ร่วมงาน'
+            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-100 text-blue-800"><i class="fas fa-check mr-1"></i>ร่วมงาน</span>`
+            : `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700">สละสิทธิ์</span>`;
+        }
+
+        const safeName = `${m.rank}${m.firstName} ${m.lastName}`.replace(/'/g, "\\'");
+
+        return `
+          <tr class="hover:bg-slate-50/90 transition-colors">
+            <td class="p-3 sm:p-3.5 text-center font-semibold text-slate-500 whitespace-nowrap">${idx + 1}</td>
+            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${m.rank}${m.firstName} ${m.lastName}</td>
+            <td class="p-3 sm:p-3.5 text-slate-600 whitespace-nowrap">${m.position || '-'}</td>
+            <td class="p-3 sm:p-3.5 text-slate-600 whitespace-nowrap">${m.phone || '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${regBadge}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-500 max-w-[180px] truncate" title="${m.note || '-'}">${m.note || '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">
+              <button type="button" onclick="openWelfareModal('edit', ${m.id})" title="แก้ไขข้อมูลสมาชิก"
+                class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" onclick="confirmDeleteWelfare(${m.id}, '${safeName}')" title="ลบสมาชิก"
+                class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openWelfareModal(mode, memberId = null) {
+      const modal = document.getElementById('welfareFormModal');
+      const title = document.getElementById('welfareModalTitle');
+      document.getElementById('welfareEditForm').reset();
+
+      if (mode === 'add') {
+        title.innerText = 'เพิ่มสมาชิกสวัสดิการกองร้อย';
+        document.getElementById('editWelfareId').value = '';
+        document.getElementById('modalWelfareStatus').value = 'ปกติ';
+      } else {
+        title.innerText = 'แก้ไขข้อมูลสมาชิกสวัสดิการกองร้อย';
+        const member = allWelfareMembers.find(m => m.id === memberId);
+        if (!member) return;
+
+        document.getElementById('editWelfareId').value = member.id;
+        document.getElementById('modalWelfareRank').value = member.rank;
+        document.getElementById('modalWelfareFirstName').value = member.firstName;
+        document.getElementById('modalWelfareLastName').value = member.lastName;
+        document.getElementById('modalWelfarePosition').value = member.position === '-' ? '' : member.position;
+        document.getElementById('modalWelfarePhone').value = member.phone === '-' ? '' : member.phone;
+        document.getElementById('modalWelfareStatus').value = member.memberStatus || 'ปกติ';
+        document.getElementById('modalWelfareNote').value = member.note === '-' ? '' : member.note;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeWelfareModal() {
+      document.getElementById('welfareFormModal').classList.add('hidden');
+    }
+
+    document.getElementById('welfareEditForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!ensureSupabaseReady()) return;
+
+      const memberId = document.getElementById('editWelfareId').value;
+      const payload = {
+        rank: document.getElementById('modalWelfareRank').value,
+        first_name: document.getElementById('modalWelfareFirstName').value.trim(),
+        last_name: document.getElementById('modalWelfareLastName').value.trim(),
+        position: document.getElementById('modalWelfarePosition').value.trim() || '-',
+        phone: document.getElementById('modalWelfarePhone').value.trim() || '-',
+        member_status: document.getElementById('modalWelfareStatus').value,
+        note: document.getElementById('modalWelfareNote').value.trim() || '-'
+      };
+
+      Swal.fire({ title: 'กำลังบันทึกข้อมูลสมาชิก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      try {
+        if (memberId === '') {
+          const { error } = await supabaseClient.from('welfare_members').insert([payload]);
+          if (error) throw error;
+        } else {
+          const { error } = await supabaseClient.from('welfare_members').update(payload).eq('id', Number(memberId));
+          if (error) throw error;
+        }
+        closeWelfareModal();
+        Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลสมาชิกสำเร็จ!', timer: 1200, showConfirmButton: false });
+        await loadAdminData(false);
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
+      }
+    });
+
+    function confirmDeleteWelfare(memberId, fullName) {
+      Swal.fire({
+        title: 'ยืนยันการลบสมาชิก?',
+        html: `คุณต้องการลบรายชื่อ <b>${fullName}</b> ออกจากทะเบียนสมาชิกสวัสดิการกองร้อยใช่หรือไม่?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่, ลบสมาชิก',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#dc2626'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          try {
+            const { error } = await supabaseClient.from('welfare_members').delete().eq('id', memberId);
+            if (error) throw error;
+            Swal.fire({ icon: 'success', title: 'ลบสมาชิกเรียบร้อยแล้ว', timer: 1200, showConfirmButton: false });
+            await loadAdminData(false);
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
+          }
+        }
+      });
+    }
+
+    function exportWelfareCSV() {
+      if (!allWelfareMembers || allWelfareMembers.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'ไม่มีข้อมูลสมาชิกสำหรับส่งออก' });
+        return;
+      }
+
+      const headers = ['ลำดับ', 'ยศ', 'ชื่อ', 'นามสกุล', 'ตำแหน่ง/หมวด', 'เบอร์โทรศัพท์', 'สถานะสมาชิก', 'สถานะลงทะเบียนงาน', 'หมายเหตุ'];
+      const escapeCSV = (val) => `"${((val === null || val === undefined) ? '' : String(val)).replace(/"/g, '""')}"`;
+
+      const rows = allWelfareMembers.map((m, idx) => {
+        const regRecord = allRecords.find(r =>
+          r.rank.trim() === m.rank.trim() &&
+          r.firstName.trim() === m.firstName.trim() &&
+          r.lastName.trim() === m.lastName.trim()
+        );
+        const regStatus = regRecord ? regRecord.attendanceStatus : 'ยังไม่ลงทะเบียน';
+
+        return [
+          idx + 1,
+          m.rank,
+          m.firstName,
+          m.lastName,
+          m.position,
+          m.phone,
+          m.memberStatus,
+          regStatus,
+          m.note
+        ].map(escapeCSV).join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ทะเบียนสมาชิกสวัสดิการกองร้อย_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>
