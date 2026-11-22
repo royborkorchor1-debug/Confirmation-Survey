@@ -461,7 +461,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-purple-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็ก (5 - 12 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กโต (5 - 12 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-purple-700 mt-0.5" id="statChildren">0</div>
                 <div class="text-[10px] text-slate-400">คน</div>
               </div>
@@ -472,7 +472,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-pink-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กเล็ก/แรกเกิด (&lt; 5 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-pink-600 mt-0.5" id="statInfants">0</div>
                 <div class="text-[10px] text-slate-400">คน (รวมเด็กแรกเกิด)</div>
               </div>
@@ -566,8 +566,8 @@
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะ</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ผู้ใหญ่ (≥13 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็ก (5-12 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ทารก (&lt;5 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กโต (5-12 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กเล็ก/แรกเกิด (&lt;5 ปี)</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">รายละเอียดบุตร</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ที่พัก</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">หมายเหตุ/เหตุผล</th>
@@ -895,11 +895,11 @@
               <span class="font-bold text-indigo-800"><span id="sumAdults">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็ก (5 - 12 ปี)</span>
+              <span class="text-slate-600">เด็กโต (5 - 12 ปี)</span>
               <span class="font-bold text-purple-700"><span id="sumChildren">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
+              <span class="text-slate-600">เด็กเล็ก/แรกเกิด (&lt; 5 ปี)</span>
               <span class="font-bold text-pink-600"><span id="sumInfants">0</span> คน</span>
             </div>
             <div class="flex justify-between pt-2 border-t border-slate-100 font-bold text-blue-950">
@@ -2149,8 +2149,8 @@
         'นามสกุล',
         'สถานะการร่วมงาน',
         'ผู้ใหญ่ (>=13 ปี)',
-        'เด็ก (5-12 ปี)',
-        'ทารก (<5 ปี)',
+        'เด็กโต (5-12 ปี)',
+        'เด็กเล็ก/แรกเกิด (<5 ปี)',
         'รวมผู้ร่วมงาน (คน)',
         'รายละเอียดบุตร',
         'ความต้องการที่พัก',
@@ -2360,8 +2360,8 @@
         `--------------------------------`,
         `👥 ยอดผู้เข้าร่วมงานรวม: ${document.getElementById('sumTotalPeople').innerText} คน`,
         `- ผู้ใหญ่ (13 ปีขึ้นไป): ${document.getElementById('sumAdults').innerText} คน`,
-        `- เด็ก (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
-        `- ทารกแรกเกิด (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
+        `- เด็กโต (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
+        `- เด็กเล็ก/แรกเกิด (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
         `--------------------------------`,
         `🏨 ความต้องการที่พัก:`,
         `- ต้องการที่พัก: ${document.getElementById('sumWantRoom').innerText} ราย (จัดห้องแล้ว ${document.getElementById('sumAssignedRoom').innerText} / รอจัด ${document.getElementById('sumUnassignedRoom').innerText})`,
