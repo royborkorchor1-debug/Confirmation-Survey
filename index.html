@@ -374,11 +374,6 @@
         <i class="fas fa-hotel"></i>
         <span>จัดการที่พัก & แผนผังห้องพัก</span>
       </button>
-      <button type="button" id="tabBtnWelfare" onclick="switchAdminMainTab('welfare')"
-        class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
-        <i class="fas fa-id-card"></i>
-        <span>สมาชิกสวัสดิการกองร้อย</span>
-      </button>
       <button type="button" id="tabBtnSummary" onclick="switchAdminMainTab('summary')"
         class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
         <i class="fas fa-file-invoice"></i>
@@ -467,7 +462,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-purple-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็ก (5 - 12 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กโต (5 - 12 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-purple-700 mt-0.5" id="statChildren">0</div>
                 <div class="text-[10px] text-slate-400">คน</div>
               </div>
@@ -478,9 +473,9 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-pink-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กเล็ก (&lt; 5 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-pink-600 mt-0.5" id="statInfants">0</div>
-                <div class="text-[10px] text-slate-400">คน (รวมเด็กแรกเกิด)</div>
+                <div class="text-[10px] text-slate-400">คน (รวมเด็กเล็ก)</div>
               </div>
               <div class="w-9 h-9 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-sm shrink-0">
                 <i class="fas fa-baby"></i>
@@ -572,8 +567,8 @@
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะ</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ผู้ใหญ่ (≥13 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็ก (5-12 ปี)</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ทารก (&lt;5 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กโต(5-12 ปี)</th>
+                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">เด็กเล็ก (&lt;5 ปี)</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">รายละเอียดบุตร</th>
                 <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ที่พัก</th>
                 <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">หมายเหตุ/เหตุผล</th>
@@ -796,108 +791,6 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- แท็บย่อยใหม่: หน้าจัดการสมาชิกสวัสดิการกองร้อย (Welfare Members) -->
-    <!-- =================================================================== -->
-    <div id="adminWelfareSection" class="hidden space-y-4 fade-in">
-      <!-- การ์ดสรุปยอดสมาชิกสวัสดิการกองร้อย -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
-        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-slate-100 flex items-center justify-between">
-          <div>
-            <span class="text-xs font-medium text-slate-500">สมาชิกสวัสดิการทั้งหมด</span>
-            <div class="text-xl sm:text-2xl font-bold text-slate-800 mt-0.5" id="welfareStatTotal">0</div>
-            <div class="text-[10px] text-slate-400">นาย</div>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-base shrink-0">
-            <i class="fas fa-users"></i>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-emerald-100 flex items-center justify-between">
-          <div>
-            <span class="text-xs font-medium text-emerald-700">สถานะปกติ (รับราชการในหน่วย)</span>
-            <div class="text-xl sm:text-2xl font-bold text-emerald-600 mt-0.5" id="welfareStatActive">0</div>
-            <div class="text-[10px] text-emerald-600/70">นาย</div>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base shrink-0">
-            <i class="fas fa-user-check"></i>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-indigo-100 flex items-center justify-between">
-          <div>
-            <span class="text-xs font-medium text-indigo-700">ลงทะเบียนร่วมงานแล้ว</span>
-            <div class="text-xl sm:text-2xl font-bold text-indigo-700 mt-0.5" id="welfareStatRegistered">0</div>
-            <div class="text-[10px] text-indigo-500">นาย (จากรายชื่อสมาชิก)</div>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base shrink-0">
-            <i class="fas fa-clipboard-check"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- ตารางจัดการสมาชิกสวัสดิการกองร้อย -->
-      <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div class="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50/50">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="font-bold text-sm sm:text-base text-slate-800 flex items-center gap-2">
-              <i class="fas fa-id-card text-blue-800"></i>
-              <span>ทะเบียนสมาชิกสวัสดิการกองร้อย</span>
-            </h3>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="exportWelfareCSV()"
-                class="bg-blue-800 hover:bg-blue-900 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-xl shadow transition-all flex items-center gap-1.5 shrink-0">
-                <i class="fas fa-file-excel"></i>
-                <span>ส่งออก CSV</span>
-              </button>
-              <button type="button" onclick="openWelfareModal('add')"
-                class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-xl shadow transition-all flex items-center gap-1.5 shrink-0">
-                <i class="fas fa-user-plus"></i>
-                <span>เพิ่มสมาชิก</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-2 w-full lg:w-auto">
-            <select id="filterWelfareStatus" onchange="renderWelfareTable()"
-              class="w-full lg:w-44 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:outline-none">
-              <option value="ALL">สถานะ: ทั้งหมด</option>
-              <option value="ปกติ">เฉพาะ: ปกติ</option>
-              <option value="ย้าย/พ้นสภาพ">เฉพาะ: ย้าย/พ้นสภาพ</option>
-            </select>
-
-            <div class="relative w-full lg:w-64">
-              <input type="text" id="searchWelfareInput" oninput="renderWelfareTable()" placeholder="ค้นหา ยศ, ชื่อ, นามสกุล, ตำแหน่ง..."
-                class="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:outline-none">
-              <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs sm:text-sm"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto w-full table-scroll-container">
-          <table class="w-full min-w-[860px] text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-100 text-slate-600 text-[11px] sm:text-xs uppercase tracking-wider border-b border-slate-200">
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">ลำดับ</th>
-                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ยศ - ชื่อ - นามสกุล</th>
-                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">ตำแหน่ง / หมวด</th>
-                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">เบอร์โทรศัพท์</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะสมาชิก</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">สถานะลงทะเบียนงาน</th>
-                <th class="p-3 sm:p-3.5 font-semibold whitespace-nowrap">หมายเหตุ</th>
-                <th class="p-3 sm:p-3.5 font-semibold text-center whitespace-nowrap">จัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="welfareTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700">
-              <tr>
-                <td colspan="8" class="p-8 text-center text-slate-400">ยังไม่มีข้อมูลสมาชิกสวัสดิการกองร้อย</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- =================================================================== -->
     <!-- แท็บย่อยที่ 3: หน้าจัดการตั้งค่าระบบ (Settings Section) -->
     <!-- =================================================================== -->
     <div id="adminSettingsSection" class="hidden space-y-6 fade-in">
@@ -1003,11 +896,11 @@
               <span class="font-bold text-indigo-800"><span id="sumAdults">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็ก (5 - 12 ปี)</span>
+              <span class="text-slate-600">เด็กโต (5 - 12 ปี)</span>
               <span class="font-bold text-purple-700"><span id="sumChildren">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">ทารกแรกเกิด (&lt; 5 ปี)</span>
+              <span class="text-slate-600">เด็กเล็ก (&lt; 5 ปี)</span>
               <span class="font-bold text-pink-600"><span id="sumInfants">0</span> คน</span>
             </div>
             <div class="flex justify-between pt-2 border-t border-slate-100 font-bold text-blue-950">
@@ -1189,81 +1082,6 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- ส่วนที่ 5: Modal เพิ่ม/แก้ไขสมาชิกสวัสดิการกองร้อย (Welfare Member Modal) -->
-  <!-- ===================================================================== -->
-  <div id="welfareFormModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto fade-in">
-      <div class="bg-gradient-to-r from-blue-950 to-indigo-900 px-5 py-4 text-white flex items-center justify-between">
-        <h3 id="welfareModalTitle" class="font-bold text-base">เพิ่มสมาชิกสวัสดิการกองร้อย</h3>
-        <button type="button" onclick="closeWelfareModal()" class="text-white/80 hover:text-white text-xl">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <form id="welfareEditForm" class="p-5 space-y-4">
-        <input type="hidden" id="editWelfareId">
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label for="modalWelfareRank" class="block text-xs font-medium text-slate-700 mb-1">ยศ *</label>
-            <select id="modalWelfareRank" required class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-              <option value="ส.ต.">ส.ต.</option>
-              <option value="ส.ท.">ส.ท.</option>
-              <option value="ส.อ.">ส.อ.</option>
-              <option value="จ.ส.ต.">จ.ส.ต.</option>
-              <option value="จ.ส.ท.">จ.ส.ท.</option>
-              <option value="จ.ส.อ.">จ.ส.อ.</option>
-              <option value="ร.ต.">ร.ต.</option>
-              <option value="ร.ท.">ร.ท.</option>
-              <option value="ร.อ.">ร.อ.</option>
-              <option value="พ.ต.">พ.ต.</option>
-              <option value="พ.ท.">พ.ท.</option>
-            </select>
-          </div>
-          <div>
-            <label for="modalWelfareFirstName" class="block text-xs font-medium text-slate-700 mb-1">ชื่อ *</label>
-            <input type="text" id="modalWelfareFirstName" required placeholder="ระบุชื่อ" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-          <div>
-            <label for="modalWelfareLastName" class="block text-xs font-medium text-slate-700 mb-1">นามสกุล *</label>
-            <input type="text" id="modalWelfareLastName" required placeholder="ระบุนามสกุล" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label for="modalWelfarePosition" class="block text-xs font-medium text-slate-700 mb-1">ตำแหน่ง / หมวด</label>
-            <input type="text" id="modalWelfarePosition" placeholder="เช่น ผบ.หมู่, เสมียนกองร้อย..." class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-          <div>
-            <label for="modalWelfarePhone" class="block text-xs font-medium text-slate-700 mb-1">เบอร์โทรศัพท์</label>
-            <input type="text" id="modalWelfarePhone" placeholder="เช่น 08x-xxx-xxxx" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label for="modalWelfareStatus" class="block text-xs font-medium text-slate-700 mb-1">สถานะสมาชิก *</label>
-            <select id="modalWelfareStatus" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-              <option value="ปกติ">ปกติ</option>
-              <option value="ย้าย/พ้นสภาพ">ย้าย/พ้นสภาพ</option>
-            </select>
-          </div>
-          <div>
-            <label for="modalWelfareNote" class="block text-xs font-medium text-slate-700 mb-1">หมายเหตุ</label>
-            <input type="text" id="modalWelfareNote" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)" class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-sm">
-          </div>
-        </div>
-
-        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-          <button type="button" onclick="closeWelfareModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm hover:bg-slate-50">ยกเลิก</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-sm font-medium shadow">บันทึกข้อมูลสมาชิก</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ===================================================================== -->
   <!-- JavaScript เชื่อมต่อ Supabase Cloud (ความเร็วสูง & Real-time) -->
   <!-- ===================================================================== -->
   <script>
@@ -1305,7 +1123,6 @@
     // ตัวแปรส่วนกลาง
     let allRecords = [];
     let allRooms = [];
-    let allWelfareMembers = [];
     let currentAdminUser = null;
     let systemConfig = {
       systemName: 'แบบสำรวจสมาชิกยืนยันยอดร่วมงานเลี้ยงสังสรรค์ ประจำปี 2569',
@@ -1617,9 +1434,6 @@
         .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
           loadAdminData(false);
         })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'welfare_members' }, () => {
-          loadAdminData(false);
-        })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, () => {
           fetchSystemConfig();
         })
@@ -1730,24 +1544,20 @@
       if (icon) icon.classList.add('fa-spin');
 
       try {
-        const [regRes, roomRes, welfareRes] = await Promise.all([
+        const [regRes, roomRes] = await Promise.all([
           supabaseClient.from('registrations').select('*').order('id', { ascending: false }),
-          supabaseClient.from('rooms').select('*').order('floor', { ascending: true }).order('room_name', { ascending: true }),
-          supabaseClient.from('welfare_members').select('*').order('id', { ascending: true })
+          supabaseClient.from('rooms').select('*').order('floor', { ascending: true }).order('room_name', { ascending: true })
         ]);
 
         if (regRes.error) throw regRes.error;
         if (roomRes.error) throw roomRes.error;
-        if (welfareRes.error) throw welfareRes.error;
 
         allRecords = (regRes.data || []).map(mapRegistrationRow);
         allRooms = (roomRes.data || []).map(mapRoomRow);
-        allWelfareMembers = (welfareRes.data || []).map(mapWelfareRow);
 
         updateDashboardStats();
         renderAdminTable();
         renderAllRoomViews();
-        renderWelfareViews();
         renderSummaryReport();
 
         if (showToast) {
@@ -1767,7 +1577,7 @@
 
     // สลับแท็บหลักในหน้าเจ้าหน้าที่
     function switchAdminMainTab(tab) {
-      const tabs = ['survey', 'rooms', 'welfare', 'summary', 'settings'];
+      const tabs = ['survey', 'rooms', 'summary', 'settings'];
       tabs.forEach(t => {
         const sec = document.getElementById(`admin${t.charAt(0).toUpperCase() + t.slice(1)}Section`);
         const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -1780,7 +1590,6 @@
       });
 
       if (tab === 'rooms') renderAllRoomViews();
-      if (tab === 'welfare') renderWelfareViews();
       if (tab === 'summary') renderSummaryReport();
     }
 
@@ -2129,8 +1938,8 @@
         'นามสกุล',
         'สถานะการร่วมงาน',
         'ผู้ใหญ่ (>=13 ปี)',
-        'เด็ก (5-12 ปี)',
-        'ทารก (<5 ปี)',
+        'เด็กโต (5-12 ปี)',
+        'เด็กเล็ก (<5 ปี)',
         'รวมผู้ร่วมงาน (คน)',
         'รายละเอียดบุตร',
         'ความต้องการที่พัก',
@@ -2340,8 +2149,8 @@
         `--------------------------------`,
         `👥 ยอดผู้เข้าร่วมงานรวม: ${document.getElementById('sumTotalPeople').innerText} คน`,
         `- ผู้ใหญ่ (13 ปีขึ้นไป): ${document.getElementById('sumAdults').innerText} คน`,
-        `- เด็ก (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
-        `- ทารกแรกเกิด (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
+        `- เด็กโต (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
+        `- เด็กเล็ก (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
         `--------------------------------`,
         `🏨 ความต้องการที่พัก:`,
         `- ต้องการที่พัก: ${document.getElementById('sumWantRoom').innerText} ราย (จัดห้องแล้ว ${document.getElementById('sumAssignedRoom').innerText} / รอจัด ${document.getElementById('sumUnassignedRoom').innerText})`,
@@ -2879,222 +2688,6 @@
           }
         }
       });
-    }
-
-    // =========================================================================
-    // ส่วนที่ 5: ระบบจัดการสมาชิกสวัสดิการกองร้อย (เพิ่ม, ลบ, แก้ไข)
-    // =========================================================================
-    function renderWelfareViews() {
-      const total = allWelfareMembers.length;
-      const activeCount = allWelfareMembers.filter(m => m.memberStatus === 'ปกติ').length;
-      const registeredCount = allWelfareMembers.filter(m => {
-        return allRecords.some(r =>
-          r.rank.trim() === m.rank.trim() &&
-          r.firstName.trim() === m.firstName.trim() &&
-          r.lastName.trim() === m.lastName.trim()
-        );
-      }).length;
-
-      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-      setTxt('welfareStatTotal', total);
-      setTxt('welfareStatActive', activeCount);
-      setTxt('welfareStatRegistered', registeredCount);
-
-      renderWelfareTable();
-    }
-
-    function renderWelfareTable() {
-      const tbody = document.getElementById('welfareTableBody');
-      if (!tbody) return;
-
-      const filterStatus = document.getElementById('filterWelfareStatus').value;
-      const search = document.getElementById('searchWelfareInput').value.toLowerCase().trim();
-
-      const filtered = allWelfareMembers.filter(m => {
-        const matchStatus = filterStatus === 'ALL' || m.memberStatus === filterStatus;
-        const fullText = `${m.rank}${m.firstName} ${m.lastName} ${m.position} ${m.phone} ${m.note}`.toLowerCase();
-        const matchSearch = !search || fullText.includes(search);
-        return matchStatus && matchSearch;
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400">ไม่พบข้อมูลสมาชิกสวัสดิการกองร้อย</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map((m, idx) => {
-        const isNormal = m.memberStatus === 'ปกติ';
-        const statusBadge = isNormal
-          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">ปกติ</span>`
-          : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">${m.memberStatus}</span>`;
-
-        const regRecord = allRecords.find(r =>
-          r.rank.trim() === m.rank.trim() &&
-          r.firstName.trim() === m.firstName.trim() &&
-          r.lastName.trim() === m.lastName.trim()
-        );
-
-        let regBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">ยังไม่ลงทะเบียน</span>`;
-        if (regRecord) {
-          regBadge = regRecord.attendanceStatus === 'ร่วมงาน'
-            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-100 text-blue-800"><i class="fas fa-check mr-1"></i>ร่วมงาน</span>`
-            : `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700">สละสิทธิ์</span>`;
-        }
-
-        const safeName = `${m.rank}${m.firstName} ${m.lastName}`.replace(/'/g, "\\'");
-
-        return `
-          <tr class="hover:bg-slate-50/90 transition-colors">
-            <td class="p-3 sm:p-3.5 text-center font-semibold text-slate-500 whitespace-nowrap">${idx + 1}</td>
-            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${m.rank}${m.firstName} ${m.lastName}</td>
-            <td class="p-3 sm:p-3.5 text-slate-600 whitespace-nowrap">${m.position || '-'}</td>
-            <td class="p-3 sm:p-3.5 text-slate-600 whitespace-nowrap">${m.phone || '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${regBadge}</td>
-            <td class="p-3 sm:p-3.5 text-xs text-slate-500 max-w-[180px] truncate" title="${m.note || '-'}">${m.note || '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">
-              <button type="button" onclick="openWelfareModal('edit', ${m.id})" title="แก้ไขข้อมูลสมาชิก"
-                class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button type="button" onclick="confirmDeleteWelfare(${m.id}, '${safeName}')" title="ลบสมาชิก"
-                class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function openWelfareModal(mode, memberId = null) {
-      const modal = document.getElementById('welfareFormModal');
-      const title = document.getElementById('welfareModalTitle');
-      document.getElementById('welfareEditForm').reset();
-
-      if (mode === 'add') {
-        title.innerText = 'เพิ่มสมาชิกสวัสดิการกองร้อย';
-        document.getElementById('editWelfareId').value = '';
-        document.getElementById('modalWelfareStatus').value = 'ปกติ';
-      } else {
-        title.innerText = 'แก้ไขข้อมูลสมาชิกสวัสดิการกองร้อย';
-        const member = allWelfareMembers.find(m => m.id === memberId);
-        if (!member) return;
-
-        document.getElementById('editWelfareId').value = member.id;
-        document.getElementById('modalWelfareRank').value = member.rank;
-        document.getElementById('modalWelfareFirstName').value = member.firstName;
-        document.getElementById('modalWelfareLastName').value = member.lastName;
-        document.getElementById('modalWelfarePosition').value = member.position === '-' ? '' : member.position;
-        document.getElementById('modalWelfarePhone').value = member.phone === '-' ? '' : member.phone;
-        document.getElementById('modalWelfareStatus').value = member.memberStatus || 'ปกติ';
-        document.getElementById('modalWelfareNote').value = member.note === '-' ? '' : member.note;
-      }
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeWelfareModal() {
-      document.getElementById('welfareFormModal').classList.add('hidden');
-    }
-
-    document.getElementById('welfareEditForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!ensureSupabaseReady()) return;
-
-      const memberId = document.getElementById('editWelfareId').value;
-      const payload = {
-        rank: document.getElementById('modalWelfareRank').value,
-        first_name: document.getElementById('modalWelfareFirstName').value.trim(),
-        last_name: document.getElementById('modalWelfareLastName').value.trim(),
-        position: document.getElementById('modalWelfarePosition').value.trim() || '-',
-        phone: document.getElementById('modalWelfarePhone').value.trim() || '-',
-        member_status: document.getElementById('modalWelfareStatus').value,
-        note: document.getElementById('modalWelfareNote').value.trim() || '-'
-      };
-
-      Swal.fire({ title: 'กำลังบันทึกข้อมูลสมาชิก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-      try {
-        if (memberId === '') {
-          const { error } = await supabaseClient.from('welfare_members').insert([payload]);
-          if (error) throw error;
-        } else {
-          const { error } = await supabaseClient.from('welfare_members').update(payload).eq('id', Number(memberId));
-          if (error) throw error;
-        }
-        closeWelfareModal();
-        Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลสมาชิกสำเร็จ!', timer: 1200, showConfirmButton: false });
-        await loadAdminData(false);
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
-      }
-    });
-
-    function confirmDeleteWelfare(memberId, fullName) {
-      Swal.fire({
-        title: 'ยืนยันการลบสมาชิก?',
-        html: `คุณต้องการลบรายชื่อ <b>${fullName}</b> ออกจากทะเบียนสมาชิกสวัสดิการกองร้อยใช่หรือไม่?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'ใช่, ลบสมาชิก',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#dc2626'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-          try {
-            const { error } = await supabaseClient.from('welfare_members').delete().eq('id', memberId);
-            if (error) throw error;
-            Swal.fire({ icon: 'success', title: 'ลบสมาชิกเรียบร้อยแล้ว', timer: 1200, showConfirmButton: false });
-            await loadAdminData(false);
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message || String(err) });
-          }
-        }
-      });
-    }
-
-    function exportWelfareCSV() {
-      if (!allWelfareMembers || allWelfareMembers.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'ไม่มีข้อมูลสมาชิกสำหรับส่งออก' });
-        return;
-      }
-
-      const headers = ['ลำดับ', 'ยศ', 'ชื่อ', 'นามสกุล', 'ตำแหน่ง/หมวด', 'เบอร์โทรศัพท์', 'สถานะสมาชิก', 'สถานะลงทะเบียนงาน', 'หมายเหตุ'];
-      const escapeCSV = (val) => `"${((val === null || val === undefined) ? '' : String(val)).replace(/"/g, '""')}"`;
-
-      const rows = allWelfareMembers.map((m, idx) => {
-        const regRecord = allRecords.find(r =>
-          r.rank.trim() === m.rank.trim() &&
-          r.firstName.trim() === m.firstName.trim() &&
-          r.lastName.trim() === m.lastName.trim()
-        );
-        const regStatus = regRecord ? regRecord.attendanceStatus : 'ยังไม่ลงทะเบียน';
-
-        return [
-          idx + 1,
-          m.rank,
-          m.firstName,
-          m.lastName,
-          m.position,
-          m.phone,
-          m.memberStatus,
-          regStatus,
-          m.note
-        ].map(escapeCSV).join(',');
-      });
-
-      const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `ทะเบียนสมาชิกสวัสดิการกองร้อย_${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     }
   </script>
 </body>
