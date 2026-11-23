@@ -47,6 +47,7 @@
       from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* ปรับแต่ง Scrollbar ให้เลื่อนบนมือถือและคอมพิวเตอร์ได้ลื่นไหล */
     .table-scroll-container {
       -webkit-overflow-scrolling: touch;
     }
@@ -101,6 +102,7 @@
     </div>
 
     <div class="p-5 sm:p-6 space-y-3 bg-white">
+      <!-- แจ้งเตือนหากยังไม่ได้ตั้งค่า Supabase URL / Key -->
       <div id="supabaseConfigWarning" class="hidden rounded-xl bg-amber-50 border border-amber-300 p-3 text-left space-y-1">
         <div class="text-amber-900 font-bold text-xs flex items-center gap-1.5">
           <i class="fas fa-exclamation-triangle text-amber-600"></i>
@@ -244,6 +246,7 @@
         </div>
       </div>
 
+      <!-- กล่องเงื่อนไขที่ 1: สละสิทธิ์ -->
       <div id="declineSection" class="hidden fade-in bg-red-50/70 p-3.5 sm:p-4 rounded-xl border border-red-100 space-y-2">
         <label for="declineReason" class="block text-xs sm:text-sm font-medium text-red-800">
           <i class="fas fa-comment-alt text-red-500 mr-1.5"></i>รายละเอียด / เหตุผลการสละสิทธิ์ <span class="text-red-500">*</span>
@@ -252,6 +255,7 @@
           class="w-full rounded-xl border border-red-200 bg-white px-3.5 py-2 text-sm text-slate-700 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"></textarea>
       </div>
 
+      <!-- กล่องเงื่อนไขที่ 2: ร่วมงาน -->
       <div id="attendSection" class="hidden fade-in bg-blue-50/60 p-3.5 sm:p-4 rounded-xl border border-blue-100 space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
@@ -328,6 +332,7 @@
   <!-- ===================================================================== -->
   <div id="adminView" class="hidden w-full max-w-7xl mx-auto px-1 sm:px-3 md:px-4 space-y-4 sm:space-y-5 fade-in">
     
+    <!-- แถบเมนูด้านบนของเจ้าหน้าที่ -->
     <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-3.5 sm:p-5 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-3.5">
       <div class="flex items-center gap-3 w-full md:w-auto">
         <div class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
@@ -357,6 +362,7 @@
       </div>
     </div>
 
+    <!-- แถบสลับเมนูหลักของเจ้าหน้าที่ -->
     <div class="bg-white p-1.5 sm:p-2 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:flex flex-wrap gap-1.5 sm:gap-2">
       <button type="button" id="tabBtnSurvey" onclick="switchAdminMainTab('survey')"
         class="w-full lg:w-auto px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 bg-blue-900 text-white shadow-sm">
@@ -445,7 +451,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-indigo-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">ผู้ใหญ่ (13 ปีขึ้นไป)</span>
+                <span class="text-xs font-medium text-slate-600">ผู้ใหญ่ (≥13 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-indigo-900 mt-0.5" id="statAdults">0</div>
                 <div class="text-[10px] text-slate-400">คน (รวมบุตร ≥ 13 ปี)</div>
               </div>
@@ -456,7 +462,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-purple-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็กโต (5 - 12 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กโต (5-12 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-purple-700 mt-0.5" id="statChildren">0</div>
                 <div class="text-[10px] text-slate-400">คน</div>
               </div>
@@ -467,7 +473,7 @@
 
             <div class="bg-white rounded-xl p-3.5 sm:p-4 shadow-sm border border-pink-100 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-slate-600">เด็กเล็ก (&lt; 5 ปี)</span>
+                <span class="text-xs font-medium text-slate-600">เด็กเล็ก (&lt;5 ปี)</span>
                 <div class="text-xl sm:text-2xl font-bold text-pink-600 mt-0.5" id="statInfants">0</div>
                 <div class="text-[10px] text-slate-400">คน (รวมเด็กเล็ก)</div>
               </div>
@@ -509,6 +515,7 @@
         </div>
       </div>
 
+      <!-- ตารางแสดงรายชื่อผู้ลงทะเบียน -->
       <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div class="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-slate-50/50">
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -579,6 +586,7 @@
           </table>
         </div>
 
+        <!-- แถบแบ่งหน้า (Pagination) -->
         <div id="adminPaginationBar" class="p-3.5 sm:px-5 sm:py-3.5 bg-slate-50/70 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs sm:text-sm">
           <div class="text-slate-600" id="paginationInfoText">
             แสดง 0 - 0 จากทั้งหมด 0 รายชื่อ
@@ -808,32 +816,14 @@
           </div>
 
           <div>
-            <label for="settingSystemDesc" class="block text-sm font-medium text-slate-700 mb-1.5">
-              <i class="fas fa-align-left text-indigo-600 mr-1.5"></i>คำอธิบาย / รายละเอียดหน้าแรก
+            <label for="settingRegistrationStatus" class="block text-sm font-medium text-slate-700 mb-1.5">
+              <i class="fas fa-toggle-on text-emerald-600 mr-1.5"></i>สถานะการเปิด-ปิดระบบ <span class="text-red-500">*</span>
             </label>
-            <textarea id="settingSystemDesc" rows="2" placeholder="เช่น ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน..."
-              class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20"></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label for="settingRegistrationStatus" class="block text-sm font-medium text-slate-700 mb-1.5">
-                <i class="fas fa-toggle-on text-emerald-600 mr-1.5"></i>สถานะการเปิด-ปิดระบบ <span class="text-red-500">*</span>
-              </label>
-              <select id="settingRegistrationStatus"
-                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
-                <option value="OPEN">เปิดระบบ (รับลงทะเบียน)</option>
-                <option value="CLOSED">ปิดระบบ (งดรับลงทะเบียนชั่วคราว)</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="settingDeadline" class="block text-sm font-medium text-slate-700 mb-1.5">
-                <i class="fas fa-calendar-times text-amber-600 mr-1.5"></i>วัน-เวลาปิดรับลงทะเบียน (ถ้ามี)
-              </label>
-              <input type="datetime-local" id="settingDeadline"
-                class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
-            </div>
+            <select id="settingRegistrationStatus"
+              class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20">
+              <option value="OPEN">เปิดระบบ (รับลงทะเบียน)</option>
+              <option value="CLOSED">ปิดระบบ (งดรับลงทะเบียนชั่วคราว)</option>
+            </select>
           </div>
 
           <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
@@ -902,15 +892,15 @@
           </h4>
           <div class="space-y-2 text-xs sm:text-sm">
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">ผู้ใหญ่ (13 ปีขึ้นไป)</span>
+              <span class="text-slate-600">ผู้ใหญ่ (≥13 ปี)</span>
               <span class="font-bold text-indigo-800"><span id="sumAdults">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็กโต (5 - 12 ปี)</span>
+              <span class="text-slate-600">เด็กโต (5-12 ปี)</span>
               <span class="font-bold text-purple-700"><span id="sumChildren">0</span> คน</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600">เด็กเล็ก (&lt; 5 ปี)</span>
+              <span class="text-slate-600">เด็กเล็ก (&lt;5 ปี)</span>
               <span class="font-bold text-pink-600"><span id="sumInfants">0</span> คน</span>
             </div>
             <div class="flex justify-between pt-2 border-t border-slate-100 font-bold text-blue-950">
@@ -1004,7 +994,7 @@
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto fade-in">
       <div class="bg-gradient-to-r from-blue-900 to-indigo-900 px-5 py-4 text-white flex items-center justify-between">
         <h3 id="modalTitle" class="font-bold text-base">เพิ่ม/แก้ไขข้อมูลสมาชิก</h3>
-        <button type="button" onclick="closeFormModal()" title="ยกเลิกและปิดหน้าต่าง" class="text-white/80 hover:text-white text-xl">
+        <button type="button" onclick="closeFormModal()" class="text-white/80 hover:text-white text-xl">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -1069,7 +1059,7 @@
 
           <div id="modalChildAgesBox" class="hidden space-y-1">
             <label for="modalChildAges" class="block text-xs font-medium text-purple-800">รายละเอียดอายุบุตร</label>
-            <input type="text" id="modalChildAges" placeholder="เช่น อายุ 8 ปี, อายุ 3 ปี" class="w-full rounded-xl border border-purple-200 bg-white px-3 py-2 text-sm">
+            <input type="text" id="modalChildAges" placeholder="เช่น อายุ 13 ปี, อายุ 5 ปี" class="w-full rounded-xl border border-purple-200 bg-white px-3 py-2 text-sm">
           </div>
 
           <div>
@@ -1081,7 +1071,8 @@
           </div>
         </div>
 
-        <div class="pt-2 flex items-center justify-end border-t border-slate-100">
+        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeFormModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors">ยกเลิก</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-blue-900 hover:bg-blue-950 text-white text-sm font-medium shadow transition-colors flex items-center gap-1.5">
             <i class="fas fa-save"></i>
             <span>บันทึกข้อมูล</span>
@@ -1263,26 +1254,12 @@
     let currentAdminUser = null;
     let systemConfig = {
       systemName: 'แบบสำรวจสมาชิกยืนยันยอดร่วมงานเลี้ยงสังสรรค์ ประจำปี 2569',
-      systemDesc: 'ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน เพื่อใช้เป็นข้อมูลในการจัดเตรียมสถานที่ อาหาร และห้องพักให้เหมาะสม',
-      regStatus: 'OPEN',
-      deadline: ''
+      regStatus: 'OPEN'
     };
     let realtimeChannel = null;
     let currentAdminPage = 1;
     const ADMIN_PAGE_SIZE = 10;
 
-    // ฟังก์ชันป้องกัน XSS / HTML Injection
-    function escapeHtml(str) {
-      if (str === null || str === undefined) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    // ฟังก์ชันจัดรูปแบบวัน-เวลาภาษาไทย
     function formatThaiDateTime(isoString) {
       if (!isoString) return '-';
       const d = new Date(isoString);
@@ -1294,6 +1271,22 @@
         hour: '2-digit',
         minute: '2-digit'
       });
+    }
+
+    // ฟังก์ชันจัดรูปแบบข้อความรายละเอียดอายุบุตรให้เป็น "อายุ 13 ปี , อายุ 5 ปี"
+    function formatChildAgesDisplay(rawAgesStr) {
+      if (!rawAgesStr || rawAgesStr === '-') return '-';
+      const parts = String(rawAgesStr).split(',').map(s => s.trim()).filter(Boolean);
+      if (parts.length === 0) return '-';
+
+      const formattedParts = parts.map(part => {
+        // ตัดคำนำหน้าเก่าออก เช่น "คนที่ 1 [ผู้ใหญ่]: 16 ปี" หรือ "คนที่ 1: 16 ปี" -> "16 ปี"
+        const cleaned = part.replace(/^คนที่\s*\d+\s*(?:\[[^\]]*\])?\s*:?\s*/i, '').trim();
+        if (!cleaned) return '';
+        return cleaned.startsWith('อายุ') ? cleaned : `อายุ ${cleaned}`;
+      }).filter(Boolean);
+
+      return formattedParts.length > 0 ? formattedParts.join(' , ') : '-';
     }
 
     // =========================================================================
@@ -1323,9 +1316,7 @@
         if (!error && data) {
           data.forEach(row => {
             if (row.config_key === 'system_name') systemConfig.systemName = row.config_value;
-            if (row.config_key === 'system_desc') systemConfig.systemDesc = row.config_value;
             if (row.config_key === 'reg_status') systemConfig.regStatus = row.config_value;
-            if (row.config_key === 'reg_deadline') systemConfig.deadline = row.config_value;
           });
           applySystemConfig();
         }
@@ -1334,44 +1325,24 @@
       }
     }
 
-    function isRegistrationOpenByConfig() {
-      if (systemConfig.regStatus === 'CLOSED') return false;
-      if (systemConfig.deadline) {
-        const deadlineTime = new Date(systemConfig.deadline).getTime();
-        if (!isNaN(deadlineTime) && Date.now() > deadlineTime) {
-          return false;
-        }
-      }
-      return true;
-    }
-
     function applySystemConfig() {
       const title = systemConfig.systemName || 'งานเลี้ยงสังสรรค์กำลังพลและครอบครัว ประจำปี 2569';
-      const desc = systemConfig.systemDesc || 'ขอเชิญสมาชิกทุกท่านแจ้งความประสงค์เข้าร่วมงาน เพื่อใช้เป็นข้อมูลในการจัดเตรียมสถานที่ อาหาร และห้องพักให้เหมาะสม';
-      const isOpen = isRegistrationOpenByConfig();
+      const isOpen = systemConfig.regStatus !== 'CLOSED';
 
       const landingTitleEl = document.getElementById('landingSystemTitle');
-      const landingDescEl = document.getElementById('landingSystemDesc');
       const surveyTitleEl = document.getElementById('surveySystemTitle');
       const settingNameEl = document.getElementById('settingSystemName');
-      const settingDescEl = document.getElementById('settingSystemDesc');
       const settingStatusEl = document.getElementById('settingRegistrationStatus');
-      const settingDeadlineEl = document.getElementById('settingDeadline');
 
       if (landingTitleEl) landingTitleEl.innerText = title;
-      if (landingDescEl) landingDescEl.innerText = desc;
       if (surveyTitleEl) surveyTitleEl.innerText = title;
       if (settingNameEl) settingNameEl.value = title;
-      if (settingDescEl) settingDescEl.value = desc;
-      if (settingStatusEl) settingStatusEl.value = systemConfig.regStatus === 'CLOSED' ? 'CLOSED' : 'OPEN';
-      if (settingDeadlineEl) settingDeadlineEl.value = systemConfig.deadline || '';
+      if (settingStatusEl) settingStatusEl.value = isOpen ? 'OPEN' : 'CLOSED';
 
       const badge = document.getElementById('landingHeroStatusBadge');
       const dot = document.getElementById('landingHeroStatusDot');
       const text = document.getElementById('landingHeroStatusText');
       const banner = document.getElementById('systemStatusBanner');
-      const bannerTitle = document.getElementById('systemStatusBannerTitle');
-      const bannerDesc = document.getElementById('systemStatusBannerDesc');
       const btnReg = document.getElementById('btnStartRegister');
 
       if (isOpen) {
@@ -1384,12 +1355,9 @@
           btnReg.classList.remove('opacity-50', 'cursor-not-allowed');
         }
       } else {
-        const isExpiredByTime = systemConfig.regStatus !== 'CLOSED' && systemConfig.deadline && !isNaN(new Date(systemConfig.deadline).getTime()) && Date.now() > new Date(systemConfig.deadline).getTime();
         if (badge) badge.className = 'mt-3.5 inline-flex items-center gap-2 bg-red-500/20 backdrop-blur-sm border border-red-300/40 text-red-200 text-xs font-medium px-3.5 py-1 rounded-full shadow-sm transition-all';
         if (dot) dot.className = 'w-2 h-2 rounded-full bg-red-400';
-        if (text) text.innerText = isExpiredByTime ? 'หมดเขตการลงทะเบียนแล้ว' : 'ปิดรับการลงทะเบียนชั่วคราว';
-        if (bannerTitle) bannerTitle.innerText = isExpiredByTime ? 'พ้นกำหนดเวลาปิดรับการลงทะเบียนแล้ว' : 'ขณะนี้ระบบปิดรับการลงทะเบียน';
-        if (bannerDesc) bannerDesc.innerText = isExpiredByTime ? `ปิดรับเมื่อ ${formatThaiDateTime(systemConfig.deadline)}` : 'กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ';
+        if (text) text.innerText = 'ปิดรับการลงทะเบียนชั่วคราว';
         if (banner) banner.classList.remove('hidden');
         if (btnReg) {
           btnReg.disabled = true;
@@ -1413,11 +1381,11 @@
 
     function goToSurveyForm() {
       if (!ensureSupabaseReady()) return;
-      if (!isRegistrationOpenByConfig()) {
+      if (systemConfig.regStatus === 'CLOSED') {
         Swal.fire({
           icon: 'warning',
           title: 'ปิดรับการลงทะเบียน',
-          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนหรือพ้นกำหนดเวลาแล้ว กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ',
+          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนชั่วคราว กรุณาติดต่อเจ้าหน้าที่ผู้รับผิดชอบ',
           confirmButtonColor: '#1e3a8a'
         });
         return;
@@ -1501,11 +1469,11 @@
       e.preventDefault();
       if (!ensureSupabaseReady()) return;
 
-      if (!isRegistrationOpenByConfig()) {
+      if (systemConfig.regStatus === 'CLOSED') {
         Swal.fire({
           icon: 'warning',
           title: 'ปิดรับการลงทะเบียน',
-          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนหรือพ้นกำหนดเวลาแล้ว',
+          text: 'ขณะนี้ระบบปิดรับการลงทะเบียนชั่วคราว',
           confirmButtonColor: '#1e3a8a'
         });
         return;
@@ -1549,9 +1517,9 @@
               Swal.fire({ icon: 'warning', title: `กรุณาระบุอายุบุตรคนที่ ${i}`, confirmButtonColor: '#1e3a8a' });
               return;
             }
-            ageList.push(`คนที่ ${i}: ${val} ${unit}`);
+            ageList.push(`อายุ ${val} ${unit}`);
           }
-          childAges = ageList.join(', ');
+          childAges = ageList.join(' , ');
         }
 
         const accRadio = document.querySelector('input[name="accommodation"]:checked');
@@ -1595,9 +1563,9 @@
             title: 'พบข้อมูลการลงทะเบียนเดิม',
             html: `
               <div class="text-left text-xs space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <div><b>ชื่อ-สกุล:</b> ${escapeHtml(existing.rank)}${escapeHtml(existing.first_name)} ${escapeHtml(existing.last_name)}</div>
-                <div><b>สถานะเดิม:</b> ${escapeHtml(existing.attendance_status)}</div>
-                <div><b>บันทึกเมื่อ:</b> ${escapeHtml(formatThaiDateTime(existing.created_at))}</div>
+                <div><b>ชื่อ-สกุล:</b> ${existing.rank}${existing.first_name} ${existing.last_name}</div>
+                <div><b>สถานะเดิม:</b> ${existing.attendance_status}</div>
+                <div><b>บันทึกเมื่อ:</b> ${formatThaiDateTime(existing.created_at)}</div>
               </div>
               <p class="text-xs text-slate-600 mt-2">ต้องการอัปเดตทับด้วยข้อมูลใหม่นี้หรือไม่?</p>
             `,
@@ -1670,8 +1638,7 @@
       e.preventDefault();
       if (!ensureSupabaseReady()) return;
 
-      const rawKeyword = (document.getElementById('lookupKeywordInput').value || '').trim();
-      const keyword = rawKeyword.toLowerCase();
+      const keyword = (document.getElementById('lookupKeywordInput').value || '').trim().toLowerCase();
       const container = document.getElementById('memberLookupResults');
       if (!keyword) return;
 
@@ -1698,7 +1665,7 @@
         if (matches.length === 0) {
           container.innerHTML = `
             <div class="text-center py-6 bg-slate-50 rounded-xl border border-slate-200 text-slate-500 text-xs">
-              ไม่พบข้อมูลการลงทะเบียนสำหรับ "<b>${escapeHtml(rawKeyword)}</b>"
+              ไม่พบข้อมูลการลงทะเบียนสำหรับ "<b>${keyword}</b>"
             </div>
           `;
           return;
@@ -1712,12 +1679,12 @@
 
           let roomHtml = '';
           if (!isAttend) {
-            roomHtml = `<span class="text-xs text-slate-500">เหตุผล: ${escapeHtml(item.declineReason || '-')}</span>`;
+            roomHtml = `<span class="text-xs text-slate-500">เหตุผล: ${item.declineReason || '-'}</span>`;
           } else if (assignedRoom) {
             roomHtml = `
               <div class="mt-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
-                <div class="font-bold"><i class="fas fa-hotel mr-1 text-emerald-600"></i>จัดห้องพักแล้ว: ห้อง ${escapeHtml(assignedRoom.roomName)} (ชั้น ${escapeHtml(assignedRoom.floor)})</div>
-                <div class="text-[11px] text-emerald-700 mt-0.5">${escapeHtml(assignedRoom.bedType)} • รูปแบบ ${escapeHtml(assignedRoom.stayType)}</div>
+                <div class="font-bold"><i class="fas fa-hotel mr-1 text-emerald-600"></i>จัดห้องพักแล้ว: ห้อง ${assignedRoom.roomName} (ชั้น ${assignedRoom.floor})</div>
+                <div class="text-[11px] text-emerald-700 mt-0.5">${assignedRoom.bedType} • รูปแบบ ${assignedRoom.stayType}</div>
               </div>
             `;
           } else if (item.accommodation === 'ต้องการ') {
@@ -1733,11 +1700,11 @@
           return `
             <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60">
               <div class="flex items-center justify-between gap-2">
-                <span class="font-bold text-slate-800">${escapeHtml(item.rank)}${escapeHtml(item.firstName)} ${escapeHtml(item.lastName)}</span>
-                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${isAttend ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${escapeHtml(item.attendanceStatus)}</span>
+                <span class="font-bold text-slate-800">${item.rank}${item.firstName} ${item.lastName}</span>
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${isAttend ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${item.attendanceStatus}</span>
               </div>
               <div class="text-xs text-slate-500 mt-1">
-                บันทึกเมื่อ: ${escapeHtml(item.timestamp)}
+                บันทึกเมื่อ: ${item.timestamp}
                 ${isAttend ? ` • รวม ${totalPeople} คน (ผู้ใหญ่ ${counts.adults}, เด็กโต ${counts.children}, เด็กเล็ก ${counts.infants})` : ''}
               </div>
               ${roomHtml}
@@ -1745,7 +1712,7 @@
           `;
         }).join('');
       } catch (err) {
-        container.innerHTML = `<div class="text-center py-6 text-red-600 text-xs">เกิดข้อผิดพลาด: ${escapeHtml(err.message || String(err))}</div>`;
+        container.innerHTML = `<div class="text-center py-6 text-red-600 text-xs">เกิดข้อผิดพลาด: ${err.message || String(err)}</div>`;
       }
     }
 
@@ -1763,7 +1730,7 @@
       document.getElementById('publicView').classList.add('hidden');
       document.getElementById('adminView').classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      await loadAdminData(false, true);
+      await loadAdminData(false);
       subscribeToRealtimeChanges();
     }
 
@@ -1857,10 +1824,10 @@
       realtimeChannel = supabaseClient
         .channel('party-admin-realtime')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'registrations' }, () => {
-          loadAdminData(false, false);
+          loadAdminData(false);
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => {
-          loadAdminData(false, false);
+          loadAdminData(false);
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, () => {
           fetchSystemConfig();
@@ -1904,11 +1871,6 @@
       };
     }
 
-    function getGuestTotalPeople(guest) {
-      const g = calculateRecordAgeGroups(guest);
-      return g.adults + g.children + g.infants;
-    }
-
     function parseRoomOccupants(occupantsStr) {
       if (!occupantsStr) return [];
       return occupantsStr
@@ -1930,7 +1892,8 @@
         });
 
         if (matchedReg) {
-          totalPeople += getGuestTotalPeople(matchedReg);
+          const g = calculateRecordAgeGroups(matchedReg);
+          totalPeople += (g.adults + g.children + g.infants);
         } else {
           totalPeople += 1;
         }
@@ -1952,7 +1915,7 @@
       }) || null;
     }
 
-    async function loadAdminData(showToast = false, alertOnError = true) {
+    async function loadAdminData(showToast = false) {
       if (!ensureSupabaseReady()) return;
       const icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('fa-spin');
@@ -1983,10 +1946,7 @@
           });
         }
       } catch (err) {
-        console.error('Error loading admin data:', err);
-        if (alertOnError || showToast) {
-          Swal.fire({ icon: 'error', title: 'โหลดข้อมูลไม่สำเร็จ', text: err.message || String(err) });
-        }
+        Swal.fire({ icon: 'error', title: 'โหลดข้อมูลไม่สำเร็จ', text: err.message || String(err) });
       } finally {
         if (icon) icon.classList.remove('fa-spin');
       }
@@ -2035,9 +1995,7 @@
       if (!ensureSupabaseReady()) return;
 
       const newName = document.getElementById('settingSystemName').value.trim();
-      const newDesc = document.getElementById('settingSystemDesc').value.trim();
       const newStatus = document.getElementById('settingRegistrationStatus').value;
-      const newDeadline = document.getElementById('settingDeadline').value || '';
 
       Swal.fire({ title: 'กำลังบันทึกการตั้งค่า...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       try {
@@ -2045,17 +2003,13 @@
           .from('system_settings')
           .upsert([
             { config_key: 'system_name', config_value: newName },
-            { config_key: 'system_desc', config_value: newDesc },
-            { config_key: 'reg_status', config_value: newStatus },
-            { config_key: 'reg_deadline', config_value: newDeadline }
+            { config_key: 'reg_status', config_value: newStatus }
           ], { onConflict: 'config_key' });
 
         if (error) throw error;
 
         systemConfig.systemName = newName;
-        systemConfig.systemDesc = newDesc;
         systemConfig.regStatus = newStatus;
-        systemConfig.deadline = newDeadline;
         applySystemConfig();
 
         Swal.fire({ icon: 'success', title: 'บันทึกการตั้งค่าเรียบร้อยแล้ว', timer: 1300, showConfirmButton: false });
@@ -2064,10 +2018,12 @@
       }
     }
 
+    // แยกช่วงอายุผู้เข้าร่วมงานในแต่ละรายการ:
+    // ผู้ใหญ่ (>= 13 ปี), เด็กโต (5 - 12 ปี), เด็กเล็ก (< 5 ปี)
     function calculateRecordAgeGroups(item) {
       let adults = Number(item.adultCount) || 0;
-      let children = 0;
-      let infants = 0;
+      let children = 0; // เด็กโต (5 - 12 ปี)
+      let infants = 0;  // เด็กเล็ก (< 5 ปี)
 
       const childCount = Number(item.childCount) || 0;
       const agesStr = (item.childAges || '').toString();
@@ -2076,9 +2032,12 @@
         const parts = agesStr.split(',').map(s => s.trim()).filter(Boolean);
         if (parts.length > 0) {
           parts.forEach(part => {
-            const numMatch = part.match(/(\d+(\.\d+)?)/);
+            // ตัดเลขลำดับ "คนที่ X" ออกก่อนดึงตัวเลขอายุจริง เพื่อป้องกันการอ่านเลขลำดับผิดเป็นอายุ
+            const withoutPrefix = part.replace(/^คนที่\s*\d+\s*(?:\[[^\]]*\])?\s*:?\s*/i, '');
+            const numMatch = withoutPrefix.match(/(\d+(\.\d+)?)/);
             const val = numMatch ? parseFloat(numMatch[1]) : 0;
-            if (part.includes('เดือน') || part.includes('วัน')) {
+
+            if (withoutPrefix.includes('เดือน') || withoutPrefix.includes('วัน')) {
               infants += 1;
             } else if (val >= 13) {
               adults += 1;
@@ -2189,6 +2148,7 @@
         const rowNumber = startIdx + idx + 1;
         const isAttend = item.attendanceStatus === 'ร่วมงาน';
         const counts = calculateRecordAgeGroups(item);
+        const formattedChildAges = isAttend ? formatChildAgesDisplay(item.childAges) : '-';
         const statusBadge = isAttend
           ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">ร่วมงาน</span>`
           : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">สละสิทธิ์</span>`;
@@ -2199,24 +2159,26 @@
               ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800">ต้องการ</span>`
               : `<span class="text-slate-500 text-xs">ไม่ต้องการ</span>`);
 
+        const safeName = `${item.rank}${item.firstName} ${item.lastName}`.replace(/'/g, "\\'");
+
         return `
           <tr class="hover:bg-slate-50/90 transition-colors">
             <td class="p-3 sm:p-3.5 text-center font-semibold text-slate-500 whitespace-nowrap">${rowNumber}</td>
-            <td class="p-3 sm:p-3.5 text-xs text-slate-500 whitespace-nowrap">${escapeHtml(item.timestamp)}</td>
-            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${escapeHtml(item.rank)}${escapeHtml(item.firstName)} ${escapeHtml(item.lastName)}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-500 whitespace-nowrap">${item.timestamp}</td>
+            <td class="p-3 sm:p-3.5 font-semibold text-slate-800 whitespace-nowrap">${item.rank}${item.firstName} ${item.lastName}</td>
             <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${statusBadge}</td>
-            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.adults : '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.children : '-'}</td>
-            <td class="p-3 sm:p-3.5 text-center font-medium">${isAttend ? counts.infants : '-'}</td>
-            <td class="p-3 sm:p-3.5 text-xs text-slate-600">${isAttend ? escapeHtml(item.childAges || '-') : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium text-indigo-900">${isAttend ? counts.adults : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium text-purple-700">${isAttend ? counts.children : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-center font-medium text-pink-600">${isAttend ? counts.infants : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-600">${formattedChildAges}</td>
             <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">${accBadge}</td>
-            <td class="p-3 sm:p-3.5 text-xs text-slate-500 max-w-[180px] truncate" title="${escapeHtml(item.declineReason || '-')}">${!isAttend ? escapeHtml(item.declineReason || '-') : '-'}</td>
+            <td class="p-3 sm:p-3.5 text-xs text-slate-500 max-w-[180px] truncate" title="${item.declineReason || '-'}">${!isAttend ? (item.declineReason || '-') : '-'}</td>
             <td class="p-3 sm:p-3.5 text-center whitespace-nowrap">
               <button type="button" onclick="openFormModal('edit', ${item.id})" title="แก้ไขข้อมูล"
                 class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
                 <i class="fas fa-edit"></i>
               </button>
-              <button type="button" onclick="confirmDeleteRecord(${item.id})" title="ลบข้อมูล"
+              <button type="button" onclick="confirmDeleteRecord(${item.id}, '${safeName}')" title="ลบข้อมูล"
                 class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
                 <i class="fas fa-trash-alt"></i>
               </button>
@@ -2226,7 +2188,6 @@
       }).join('');
     }
 
-    // Modal เพิ่ม / แก้ไขข้อมูลผู้ลงทะเบียน
     function openFormModal(mode, recordId = null) {
       const modal = document.getElementById('adminFormModal');
       const title = document.getElementById('modalTitle');
@@ -2249,7 +2210,8 @@
         document.getElementById('modalDeclineReason').value = rec.declineReason === '-' ? '' : rec.declineReason;
         document.getElementById('modalAdultCount').value = rec.adultCount || 1;
         document.getElementById('modalChildCount').value = rec.childCount || 0;
-        document.getElementById('modalChildAges').value = rec.childAges === '-' ? '' : rec.childAges;
+        const formattedAges = formatChildAgesDisplay(rec.childAges);
+        document.getElementById('modalChildAges').value = formattedAges === '-' ? '' : formattedAges;
         document.getElementById('modalAccommodation').value = rec.accommodation === 'ต้องการ' ? 'ต้องการ' : 'ไม่ต้องการ';
       }
 
@@ -2280,6 +2242,8 @@
       const recordId = document.getElementById('editRecordId').value;
       const status = document.getElementById('modalStatus').value;
       const childCount = status === 'ร่วมงาน' ? (Number(document.getElementById('modalChildCount').value) || 0) : 0;
+      const rawModalAges = document.getElementById('modalChildAges').value.trim();
+      const formattedModalAges = (status === 'ร่วมงาน' && childCount > 0) ? formatChildAgesDisplay(rawModalAges) : '-';
 
       const payload = {
         rank: document.getElementById('modalRank').value,
@@ -2289,7 +2253,7 @@
         decline_reason: status === 'สละสิทธิ์' ? (document.getElementById('modalDeclineReason').value.trim() || '-') : '-',
         adult_count: status === 'ร่วมงาน' ? Number(document.getElementById('modalAdultCount').value) : 0,
         child_count: childCount,
-        child_ages: (status === 'ร่วมงาน' && childCount > 0) ? (document.getElementById('modalChildAges').value.trim() || '-') : '-',
+        child_ages: formattedModalAges,
         accommodation: status === 'ร่วมงาน' ? document.getElementById('modalAccommodation').value : '-'
       };
 
@@ -2312,13 +2276,10 @@
       }
     });
 
-    function confirmDeleteRecord(recordId) {
-      const rec = allRecords.find(r => r.id === recordId);
-      const fullName = rec ? `${rec.rank}${rec.firstName} ${rec.lastName}` : `รายการที่ ${recordId}`;
-
+    function confirmDeleteRecord(recordId, fullName) {
       Swal.fire({
         title: 'ยืนยันการลบรายชื่อ?',
-        html: `คุณต้องการลบข้อมูลของ <b>${escapeHtml(fullName)}</b> ใช่หรือไม่?`,
+        html: `คุณต้องการลบข้อมูลของ <b>${fullName}</b> ใช่หรือไม่?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'ใช่, ลบข้อมูล',
@@ -2376,6 +2337,7 @@
         const counts = calculateRecordAgeGroups(item);
         const totalPeople = isAttend ? (counts.adults + counts.children + counts.infants) : 0;
         const assignedRoom = isAttend ? findAssignedRoomForGuest(item, allRooms) : null;
+        const formattedAges = isAttend ? formatChildAgesDisplay(item.childAges) : '-';
 
         return [
           idx + 1,
@@ -2388,7 +2350,7 @@
           isAttend ? counts.children : 0,
           isAttend ? counts.infants : 0,
           totalPeople,
-          isAttend ? (item.childAges || '-') : '-',
+          formattedAges,
           isAttend ? (item.accommodation || '-') : '-',
           assignedRoom ? assignedRoom.roomName : (item.accommodation === 'ต้องการ' ? 'รอจัดห้อง' : '-'),
           assignedRoom ? assignedRoom.floor : '-',
@@ -2528,8 +2490,8 @@
           declineBody.innerHTML = declineList.map((d, i) => `
             <tr class="hover:bg-red-50/30">
               <td class="p-3 text-slate-500">${i + 1}</td>
-              <td class="p-3 font-medium text-slate-800 whitespace-nowrap">${escapeHtml(d.rank)}${escapeHtml(d.firstName)} ${escapeHtml(d.lastName)}</td>
-              <td class="p-3 text-slate-600">${escapeHtml(d.declineReason || '-')}</td>
+              <td class="p-3 font-medium text-slate-800 whitespace-nowrap">${d.rank}${d.firstName} ${d.lastName}</td>
+              <td class="p-3 text-slate-600">${d.declineReason || '-'}</td>
             </tr>
           `).join('');
         }
@@ -2544,7 +2506,8 @@
 
       allRecords.forEach(item => {
         if (item.attendanceStatus === 'ร่วมงาน') {
-          const p = getGuestTotalPeople(item);
+          const counts = calculateRecordAgeGroups(item);
+          const p = counts.adults + counts.children + counts.infants;
           if (p === 1) {
             soloCount++;
             soloPeople += p;
@@ -2565,9 +2528,9 @@
         `• สละสิทธิ์: ${document.getElementById('sumDecline').innerText} ราย`,
         `--------------------------------`,
         `👥 ยอดผู้เข้าร่วมงานรวม: ${document.getElementById('sumTotalPeople').innerText} คน`,
-        `- ผู้ใหญ่ (13 ปีขึ้นไป): ${document.getElementById('sumAdults').innerText} คน`,
-        `- เด็กโต (5 - 12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
-        `- เด็กเล็ก (< 5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
+        `- ผู้ใหญ่ (≥13 ปี): ${document.getElementById('sumAdults').innerText} คน`,
+        `- เด็กโต (5-12 ปี): ${document.getElementById('sumChildren').innerText} คน`,
+        `- เด็กเล็ก (<5 ปี): ${document.getElementById('sumInfants').innerText} คน`,
         `--------------------------------`,
         `🏨 ความต้องการที่พัก:`,
         `- ต้องการที่พัก: ${document.getElementById('sumWantRoom').innerText} ราย (จัดห้องแล้ว ${document.getElementById('sumAssignedRoom').innerText} / รอจัด ${document.getElementById('sumUnassignedRoom').innerText})`,
@@ -2646,28 +2609,27 @@
             : 'bg-red-50/80 border-red-300 hover:border-red-500 text-red-950';
           const badgeStyle = isAvailable ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white';
           const stayIcon = room.stayType === 'ครอบครัว' ? 'fa-users' : 'fa-user';
-          const escapedOcc = escapeHtml(occList.join(', '));
 
           return `
             <div onclick="openRoomModal('edit', ${room.id})"
               class="cursor-pointer rounded-2xl border-2 p-3.5 transition-all shadow-sm hover:shadow-md flex flex-col justify-between ${cardStyle}">
               <div>
                 <div class="flex items-center justify-between gap-1 mb-2">
-                  <span class="font-bold text-base sm:text-lg tracking-tight">ห้อง ${escapeHtml(room.roomName)}</span>
-                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${badgeStyle}">${escapeHtml(room.status)}</span>
+                  <span class="font-bold text-base sm:text-lg tracking-tight">ห้อง ${room.roomName}</span>
+                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${badgeStyle}">${room.status}</span>
                 </div>
                 <div class="flex flex-wrap gap-1.5 text-[11px] mb-2">
                   <span class="bg-white/80 px-2 py-0.5 rounded-md border border-slate-200/80 text-slate-700">
-                    <i class="fas fa-bed mr-1 text-indigo-600"></i>${escapeHtml(room.bedType)}
+                    <i class="fas fa-bed mr-1 text-indigo-600"></i>${room.bedType}
                   </span>
                   <span class="bg-white/80 px-2 py-0.5 rounded-md border border-slate-200/80 text-slate-700">
-                    <i class="fas ${stayIcon} mr-1 text-amber-600"></i>${escapeHtml(room.stayType)} (${room.capacity} คน)
+                    <i class="fas ${stayIcon} mr-1 text-amber-600"></i>${room.stayType} (${room.capacity} คน)
                   </span>
                 </div>
               </div>
               <div class="pt-2 border-t border-slate-200/60 text-xs">
                 ${occList.length > 0
-                  ? `<p class="font-medium text-slate-800 line-clamp-2" title="${escapedOcc}"><i class="fas fa-user-check text-red-600 mr-1"></i>${escapedOcc}</p>` 
+                  ? `<p class="font-medium text-slate-800 line-clamp-2" title="${occList.join(', ')}"><i class="fas fa-user-check text-red-600 mr-1"></i>${occList.join(', ')}</p>` 
                   : `<p class="text-emerald-700/80 italic"><i class="fas fa-plus-circle mr-1"></i>คลิกเพื่อจัดผู้เข้าพัก</p>`}
               </div>
             </div>
@@ -2677,7 +2639,7 @@
         return `
           <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
             <div class="flex items-center gap-2 mb-3">
-              <span class="bg-indigo-900 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-sm">ชั้นที่ ${escapeHtml(floor)}</span>
+              <span class="bg-indigo-900 text-white text-xs font-bold px-3 py-1 rounded-lg shadow-sm">ชั้นที่ ${floor}</span>
               <span class="text-xs text-slate-500">จำนวน ${roomsInFloor.length} ห้อง</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -2697,7 +2659,8 @@
       const filterRoom = document.getElementById('filterRoomStayType').value;
 
       const guestsNeedRoom = allRecords.filter(r => r.attendanceStatus === 'ร่วมงาน' && r.accommodation === 'ต้องการ').map(g => {
-        const totalPeople = getGuestTotalPeople(g);
+        const counts = calculateRecordAgeGroups(g);
+        const totalPeople = counts.adults + counts.children + counts.infants;
         const groupType = totalPeople === 1 ? 'คนเดียว' : 'ครอบครัว';
         const fullName = `${g.rank}${g.firstName} ${g.lastName}`;
         const assignedRoom = findAssignedRoomForGuest(g, allRooms);
@@ -2718,17 +2681,19 @@
             ? `<span class="bg-blue-100 text-blue-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">คนเดียว (1 คน)</span>`
             : `<span class="bg-purple-100 text-purple-800 text-[11px] font-semibold px-2 py-0.5 rounded-full">ครอบครัว (${g.totalPeople} คน)</span>`;
 
+          const safeFullName = g.fullName.replace(/'/g, "\\'");
+          const formattedAges = formatChildAgesDisplay(g.childAges);
           const statusHtml = g.assignedRoom
             ? `<div class="flex flex-col sm:items-end gap-1">
                 <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
-                  <i class="fas fa-check-circle mr-1"></i>ห้อง ${escapeHtml(g.assignedRoom.roomName)} (ชั้น ${escapeHtml(g.assignedRoom.floor)})
+                  <i class="fas fa-check-circle mr-1"></i>ห้อง ${g.assignedRoom.roomName} (ชั้น ${g.assignedRoom.floor})
                 </span>
-                <button type="button" onclick="unassignGuestFromRoom(${g.assignedRoom.id}, ${g.id})"
+                <button type="button" onclick="unassignGuestFromRoom(${g.assignedRoom.id}, '${safeFullName}')"
                   class="text-[11px] text-red-600 hover:text-red-800 hover:underline font-medium">
                   <i class="fas fa-times-circle mr-0.5"></i>นำออกจากห้อง
                 </button>
                </div>`
-            : `<button type="button" onclick="quickAssignGuest(${g.id})"
+            : `<button type="button" onclick="quickAssignGuest('${safeFullName}', '${g.groupType}', ${g.totalPeople})"
                 class="text-xs font-medium bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg shadow-sm transition-all shrink-0">
                 <i class="fas fa-bed mr-1"></i>จัดเข้าห้องพัก
                </button>`;
@@ -2737,11 +2702,11 @@
             <div class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="font-semibold text-slate-800 text-sm">${escapeHtml(g.fullName)}</span>
+                  <span class="font-semibold text-slate-800 text-sm">${g.fullName}</span>
                   ${groupBadge}
                 </div>
                 <p class="text-xs text-slate-500 mt-1">
-                  ผู้ใหญ่ ${g.adultCount} คน ${g.childCount > 0 ? `• บุตร ${g.childCount} คน (${escapeHtml(g.childAges)})` : ''}
+                  ตนเอง/ภรรยา ${g.adultCount} คน ${g.childCount > 0 ? `• บุตร ${g.childCount} คน (${formattedAges})` : ''}
                 </p>
               </div>
               <div>${statusHtml}</div>
@@ -2763,15 +2728,15 @@
             <div class="p-3.5 rounded-xl border ${isAvail ? 'border-emerald-200 bg-emerald-50/30' : 'border-red-200 bg-red-50/30'} flex items-center justify-between gap-3">
               <div>
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="font-bold text-slate-800">ห้อง ${escapeHtml(r.roomName)}</span>
-                  <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">ชั้น ${escapeHtml(r.floor)}</span>
-                  <span class="text-xs ${r.stayType === 'ครอบครัว' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} px-2 py-0.5 rounded-md font-medium">${escapeHtml(r.stayType)}</span>
+                  <span class="font-bold text-slate-800">ห้อง ${r.roomName}</span>
+                  <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">ชั้น ${r.floor}</span>
+                  <span class="text-xs ${r.stayType === 'ครอบครัว' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} px-2 py-0.5 rounded-md font-medium">${r.stayType}</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-1">${escapeHtml(r.bedType)} • เข้าพัก ${currentPeopleCount}/${r.capacity} คน (ว่างอีก ${remainingCap} ที่)</p>
-                ${occList.length > 0 ? `<p class="text-xs font-medium text-indigo-900 mt-1"><i class="fas fa-user mr-1"></i>${escapeHtml(occList.join(', '))}</p>` : ''}
+                <p class="text-xs text-slate-500 mt-1">${r.bedType} • เข้าพัก ${currentPeopleCount}/${r.capacity} คน (ว่างอีก ${remainingCap} ที่)</p>
+                ${occList.length > 0 ? `<p class="text-xs font-medium text-indigo-900 mt-1"><i class="fas fa-user mr-1"></i>${occList.join(', ')}</p>` : ''}
               </div>
               <div class="flex flex-col items-end gap-1.5 shrink-0">
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isAvail ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${escapeHtml(r.status)}</span>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isAvail ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${r.status}</span>
                 <button type="button" onclick="openRoomModal('edit', ${r.id})" class="text-xs text-indigo-700 hover:underline font-medium">จัดการห้อง</button>
               </div>
             </div>
@@ -2780,14 +2745,7 @@
       }
     }
 
-    function quickAssignGuest(guestId) {
-      const guest = allRecords.find(r => r.id === guestId);
-      if (!guest) return;
-
-      const fullName = `${guest.rank}${guest.firstName} ${guest.lastName}`;
-      const totalPeople = getGuestTotalPeople(guest);
-      const groupType = totalPeople === 1 ? 'คนเดียว' : 'ครอบครัว';
-
+    function quickAssignGuest(fullName, groupType, totalPeople = 1) {
       const candidateRooms = allRooms.filter(r => {
         if (r.status === 'เต็ม') return false;
         const occList = parseRoomOccupants(r.occupants);
@@ -2815,7 +2773,7 @@
       });
 
       Swal.fire({
-        title: `จัดห้องพักให้ ${escapeHtml(fullName)}`,
+        title: `จัดห้องพักให้ ${fullName}`,
         text: `ประเภท: ${groupType} (จำนวน ${totalPeople} คน)`,
         input: 'select',
         inputOptions: inputOptions,
@@ -2870,17 +2828,13 @@
       });
     }
 
-    function unassignGuestFromRoom(roomId, guestId) {
+    function unassignGuestFromRoom(roomId, fullName) {
       const room = allRooms.find(r => r.id === roomId);
-      const guest = allRecords.find(r => r.id === guestId);
-      if (!room || !guest) return;
-
-      const fullName = `${guest.rank}${guest.firstName} ${guest.lastName}`;
-      const normFull = fullName.replace(/\s+/g, ' ').trim();
+      if (!room) return;
 
       Swal.fire({
         title: 'นำรายชื่อออกจากห้องพัก?',
-        html: `ต้องการนำ <b>${escapeHtml(fullName)}</b> ออกจาก <b>ห้อง ${escapeHtml(room.roomName)}</b> ใช่หรือไม่?`,
+        html: `ต้องการนำ <b>${fullName}</b> ออกจาก <b>ห้อง ${room.roomName}</b> ใช่หรือไม่?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'ใช่, นำออกจากห้อง',
@@ -2889,7 +2843,7 @@
       }).then(async (result) => {
         if (!result.isConfirmed) return;
 
-        const remaining = parseRoomOccupants(room.occupants).filter(occ => occ.replace(/\s+/g, ' ').trim() !== normFull);
+        const remaining = parseRoomOccupants(room.occupants).filter(occ => occ !== fullName);
         const newOccupants = remaining.join(', ');
         const remainingPeopleCount = calculateRoomOccupiedPeopleCount(remaining);
         const newStatus = remaining.length === 0 ? 'ว่าง' : (remainingPeopleCount >= room.capacity ? 'เต็ม' : 'ว่าง');
@@ -2944,19 +2898,19 @@
 
         return `
           <tr class="hover:bg-slate-50 transition-colors">
-            <td class="p-3.5 font-bold text-slate-800">${escapeHtml(r.roomName)}</td>
-            <td class="p-3.5 text-center">${escapeHtml(r.floor)}</td>
-            <td class="p-3.5 text-center">${escapeHtml(r.bedType)}</td>
+            <td class="p-3.5 font-bold text-slate-800">${r.roomName}</td>
+            <td class="p-3.5 text-center">${r.floor}</td>
+            <td class="p-3.5 text-center">${r.bedType}</td>
             <td class="p-3.5 text-center">${stayBadge}</td>
             <td class="p-3.5 text-center">${capBadge}</td>
             <td class="p-3.5 text-center">${statusBadge}</td>
-            <td class="p-3.5 text-xs text-slate-600 max-w-xs truncate" title="${escapeHtml(r.occupants || '-')}">${escapeHtml(r.occupants || '-')}</td>
+            <td class="p-3.5 text-xs text-slate-600 max-w-xs truncate" title="${r.occupants || '-'}">${r.occupants || '-'}</td>
             <td class="p-3.5 text-center whitespace-nowrap">
               <button type="button" onclick="openRoomModal('edit', ${r.id})" title="แก้ไขห้องพัก"
                 class="text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 p-2 rounded-lg transition-colors mr-1">
                 <i class="fas fa-edit"></i>
               </button>
-              <button type="button" onclick="confirmDeleteRoom(${r.id})" title="ลบห้องพัก"
+              <button type="button" onclick="confirmDeleteRoom(${r.id}, '${r.roomName.replace(/'/g, "\\'")}')" title="ลบห้องพัก"
                 class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
                 <i class="fas fa-trash-alt"></i>
               </button>
@@ -2975,9 +2929,9 @@
       const guestsNeedRoom = allRecords.filter(r => r.attendanceStatus === 'ร่วมงาน' && r.accommodation === 'ต้องการ');
       guestSelect.innerHTML = `<option value="">-- เลือกเพิ่มรายชื่อผู้ที่ต้องการที่พัก (${guestsNeedRoom.length} ราย) --</option>` +
         guestsNeedRoom.map(g => {
-          const total = getGuestTotalPeople(g);
+          const total = (Number(g.adultCount) || 1) + (Number(g.childCount) || 0);
           const name = `${g.rank}${g.firstName} ${g.lastName}`;
-          return `<option value="${escapeHtml(name)}">${escapeHtml(name)} (${total === 1 ? 'คนเดียว' : `ครอบครัว ${total} คน`})</option>`;
+          return `<option value="${name}">${name} (${total === 1 ? 'คนเดียว' : `ครอบครัว ${total} คน`})</option>`;
         }).join('');
 
       if (mode === 'add') {
@@ -3089,13 +3043,10 @@
       }
     });
 
-    function confirmDeleteRoom(roomId) {
-      const room = allRooms.find(r => r.id === roomId);
-      const roomName = room ? room.roomName : `ID ${roomId}`;
-
+    function confirmDeleteRoom(roomId, roomName) {
       Swal.fire({
         title: 'ยืนยันการลบห้องพัก?',
-        html: `คุณต้องการลบ <b>ห้อง ${escapeHtml(roomName)}</b> ออกจากระบบใช่หรือไม่?`,
+        html: `คุณต้องการลบ <b>ห้อง ${roomName}</b> ออกจากระบบใช่หรือไม่?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'ใช่, ลบห้องพัก',
